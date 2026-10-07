@@ -139,6 +139,14 @@ class _ComputersScreenState extends State<ComputersScreen> {
                     child: Text('Зоны клуба', style: TextStyle(fontSize: 13, color: Color(0xFF94A3B8))),
                   ),
                 ),
+                InkWell(
+                  onTap: () => context.go('/members'),
+                  borderRadius: BorderRadius.circular(6),
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                    child: Text('Клиенты', style: TextStyle(fontSize: 13, color: Color(0xFF94A3B8))),
+                  ),
+                ),
               ],
             ),
           ),
@@ -149,32 +157,45 @@ class _ComputersScreenState extends State<ComputersScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            // Панель фильтров и кнопка создания
             Card(
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   children: [
-                    TextField(
-                      controller: _searchController,
-                      decoration: InputDecoration(
-                        hintText: 'Поиск по названию ПК, видеокарте или процессору...',
-                        prefixIcon: const Icon(Icons.search_rounded, size: 20),
-                        suffixIcon: _searchController.text.isNotEmpty
-                            ? IconButton(
-                                icon: const Icon(Icons.clear, size: 18),
-                                onPressed: () {
-                                  _searchController.clear();
-                                  notifier.applyQuery(q.copyWith(search: ''));
-                                  _pushQueryToUrl(notifier.query);
-                                },
-                              )
-                            : null,
-                      ),
-                      onChanged: (text) {
-                        notifier.setSearchDebounced(text, () {
-                          _pushQueryToUrl(notifier.query);
-                        });
-                      },
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: _searchController,
+                            decoration: InputDecoration(
+                              hintText: 'Поиск по названию ПК, видеокарте или процессору...',
+                              prefixIcon: const Icon(Icons.search_rounded, size: 20),
+                              suffixIcon: _searchController.text.isNotEmpty
+                                  ? IconButton(
+                                      icon: const Icon(Icons.clear, size: 18),
+                                      onPressed: () {
+                                        _searchController.clear();
+                                        notifier.applyQuery(q.copyWith(search: ''));
+                                        _pushQueryToUrl(notifier.query);
+                                      },
+                                    )
+                                  : null,
+                            ),
+                            onChanged: (text) {
+                              notifier.setSearchDebounced(text, () {
+                                _pushQueryToUrl(notifier.query);
+                              });
+                            },
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        FilledButton.icon(
+                          onPressed: () => context.go('/computers/new'),
+                          icon: const Icon(Icons.add_rounded, size: 20),
+                          label: const Text('Добавить ПК'),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 14),
                     Wrap(
@@ -329,10 +350,19 @@ class _ComputersScreenState extends State<ComputersScreen> {
                       mobileCardBuilder: (c) => Card(
                         child: ListTile(
                           title: Text(c.name, style: const TextStyle(fontWeight: FontWeight.bold)),
-                          subtitle: Text('${c.gpu} • ${c.cpu}\nТариф: ${c.hourlyRate.toInt()} ₽/ч'),
-                          trailing: IconButton(
-                            icon: Icon(c.isDeleted ? Icons.restore_from_trash_rounded : Icons.delete_outline),
-                            onPressed: () => c.isDeleted ? notifier.restore(c.id) : notifier.softDelete(c.id),
+                          subtitle: Text('${c.gpu} • ${c.cpu}\nТариф: ${c.hourlyRate.toInt()} ₽/ч\nIP: ${c.ipAddress}'),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.edit_outlined, size: 20),
+                                onPressed: () => context.go('/computers/${c.id}/edit'),
+                              ),
+                              IconButton(
+                                icon: Icon(c.isDeleted ? Icons.restore_from_trash_rounded : Icons.delete_outline),
+                                onPressed: () => c.isDeleted ? notifier.restore(c.id) : notifier.softDelete(c.id),
+                              ),
+                            ],
                           ),
                         ),
                       ),
@@ -364,6 +394,10 @@ class _ComputersScreenState extends State<ComputersScreen> {
                           ),
                         ),
                         TableColumnSpec<Computer>(
+                          label: 'IP-адрес',
+                          build: (c) => Text(c.ipAddress, style: const TextStyle(fontSize: 12, fontFamily: 'monospace', color: Color(0xFF94A3B8))),
+                        ),
+                        TableColumnSpec<Computer>(
                           label: 'Видеокарта',
                           sortField: 'gpu',
                           build: (c) => Container(
@@ -377,7 +411,8 @@ class _ComputersScreenState extends State<ComputersScreen> {
                         ),
                         TableColumnSpec<Computer>(
                           label: 'Процессор',
-                          build: (c) => Text(c.cpu, style: const TextStyle(fontSize: 13, color: Color(0xFF94A3B8))),                        ),
+                          build: (c) => Text(c.cpu, style: const TextStyle(fontSize: 13, color: Color(0xFF94A3B8))),
+                        ),
                         TableColumnSpec<Computer>(
                           label: 'ОЗУ',
                           sortField: 'ram',
@@ -395,6 +430,11 @@ class _ComputersScreenState extends State<ComputersScreen> {
                         ),
                       ],
                       actions: (c) => [
+                        IconButton(
+                          tooltip: 'Редактировать сетап',
+                          icon: const Icon(Icons.edit_outlined, size: 19, color: Color(0xFF38BDF8)),
+                          onPressed: () => context.go('/computers/${c.id}/edit'),
+                        ),
                         if (!c.isDeleted)
                           IconButton(
                             tooltip: 'Отправить в архив',

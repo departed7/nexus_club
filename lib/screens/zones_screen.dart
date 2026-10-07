@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../models/club_zone.dart';
 import '../models/zone_query.dart';
+import '../repositories/computer_repository.dart';
 import '../state/zone_list_notifier.dart';
 import '../widgets/entity_table.dart';
 import '../widgets/pagination_bar.dart';
@@ -48,6 +49,43 @@ class _ZonesScreenState extends State<ZonesScreen> {
     context.go(uri.toString());
   }
 
+  // Проверка удаления связанной сущности (Критерий 13)
+  Future<void> _handleDeleteZone(ClubZone zone) async {
+    final compRepo = context.read<ComputerRepository>();
+    final linkedComputersCount = await compRepo.countByZoneId(zone.id);
+
+    if (linkedComputersCount > 0) {
+      if (!mounted) return;
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          backgroundColor: const Color(0xFF161922),
+          title: const Row(
+            children: [
+              Icon(Icons.warning_amber_rounded, color: Color(0xFFFBBF24)),
+              SizedBox(width: 8),
+              Text('Невозможно удалить зону'),
+            ],
+          ),
+          content: Text(
+            'К зоне "${zone.name}" привязано $linkedComputersCount игровых компьютеров.\n\nПеред удалением перенесите компьютеры в другую зону.',
+          ),
+          actions: [
+            FilledButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: const Text('Понятно'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
+    if (mounted) {
+      context.read<ZoneListNotifier>().softDelete(zone.id);
+    }
+  }
+
   @override
   void dispose() {
     _searchController.dispose();
@@ -61,23 +99,10 @@ class _ZonesScreenState extends State<ZonesScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(7),
-              decoration: BoxDecoration(
-                color: const Color(0xFF1E2433),
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: const Color(0xFF2D354B)),
-              ),
-              child: const Icon(Icons.meeting_room_outlined, size: 20, color: Color(0xFF38BDF8)),
-            ),
-            const SizedBox(width: 12),
-            const Text(
-              'Зоны зала',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, letterSpacing: -0.5),
-            ),
-          ],
+        title: const Text('Зоны зала'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => context.go('/computers'),
         ),
         actions: [
           Container(
@@ -106,6 +131,14 @@ class _ZonesScreenState extends State<ZonesScreen> {
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: const Text('Зоны клуба', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.white)),
+                ),
+                InkWell(
+                  onTap: () => context.go('/members'),
+                  borderRadius: BorderRadius.circular(6),
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                    child: Text('Клиенты', style: TextStyle(fontSize: 13, color: Color(0xFF94A3B8))),
+                  ),
                 ),
               ],
             ),
@@ -146,13 +179,6 @@ class _ZonesScreenState extends State<ZonesScreen> {
                 ));
                 _pushQueryToUrl(notifier.query);
               },
-              mobileCardBuilder: (z) => Card(
-                child: ListTile(
-                  title: Text(z.name, style: const TextStyle(fontWeight: FontWeight.bold)),
-                  subtitle: Text(z.description),
-                  trailing: Text('${z.hourlyPrice.toInt()} ₽/ч', style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF38BDF8))),
-                ),
-              ),
               columns: [
                 TableColumnSpec<ClubZone>(
                   label: 'Зона клуба',
@@ -169,6 +195,13 @@ class _ZonesScreenState extends State<ZonesScreen> {
                   numeric: true,
                   build: (z) => Text('${z.hourlyPrice.toInt()} ₽/ч',
                       style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF38BDF8), fontSize: 14)),
+                ),
+              ],
+              actions: (z) => [
+                IconButton(
+                  tooltip: 'Удалить зону (Проверка связей)',
+                  icon: const Icon(Icons.delete_outline, size: 20, color: Color(0xFF94A3B8)),
+                  onPressed: () => _handleDeleteZone(z),
                 ),
               ],
             ),

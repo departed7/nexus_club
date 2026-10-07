@@ -1,10 +1,16 @@
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/club_zone.dart';
 import '../models/page_result.dart';
 import '../models/zone_query.dart';
 import 'zone_repository.dart';
 
 class InMemoryZoneRepository implements ZoneRepository {
-  final List<ClubZone> _zones = [
+  static const _storageKey = 'nexus_zones_v2';
+  final SharedPreferences? _prefs;
+  List<ClubZone> _zones = [];
+
+  static final List<ClubZone> _initialSeed = [
     const ClubZone(id: 1, name: 'Standard Hall', description: 'Основной зал: мониторы 165Hz, кресла Knight, периферия HyperX', hourlyPrice: 150.0),
     const ClubZone(id: 2, name: 'VIP Neon Room', description: 'Приватная неоновая зона: RTX 4080 Super, 280Hz ASUS ROG', hourlyPrice: 350.0),
     const ClubZone(id: 3, name: 'Bootcamp Pro 5v5', description: 'Шумоизолированная комната для кланваров, сетап 360Hz ZOWIE', hourlyPrice: 280.0),
@@ -15,6 +21,37 @@ class InMemoryZoneRepository implements ZoneRepository {
     const ClubZone(id: 8, name: 'Chill & Smoke Bar', description: 'Барная стойка с трансляциями Twitch и напитками', hourlyPrice: 100.0),
   ];
 
+  InMemoryZoneRepository([this._prefs]) {
+    _restore();
+  }
+
+  void _restore() {
+    final prefs = _prefs;
+    if (prefs == null) {
+      _zones = List.from(_initialSeed);
+      return;
+    }
+    final raw = prefs.getString(_storageKey);
+    if (raw == null) {
+      _zones = List.from(_initialSeed);
+      _persist();
+      return;
+    }
+    try {
+      final list = jsonDecode(raw) as List;
+      _zones = list.map((e) => ClubZone.fromJson(e as Map<String, dynamic>)).toList();
+    } catch (_) {
+      _zones = List.from(_initialSeed);
+      _persist();
+    }
+  }
+
+  Future<void> _persist() async {
+    final prefs = _prefs;
+    if (prefs == null) return;
+    await prefs.setString(_storageKey, jsonEncode(_zones.map((z) => z.toJson()).toList()));
+  }
+
   @override
   Future<List<ClubZone>> findAllActive() async {
     return _zones.where((z) => !z.isDeleted).toList();
@@ -22,7 +59,7 @@ class InMemoryZoneRepository implements ZoneRepository {
 
   @override
   Future<PageResult<ClubZone>> find(ZoneQuery query) async {
-    await Future.delayed(const Duration(milliseconds: 150));
+    await Future.delayed(const Duration(milliseconds: 100));
     var rows = _zones.where((z) => query.includeDeleted || !z.isDeleted).toList();
 
     if (query.search.trim().isNotEmpty) {
@@ -58,17 +95,24 @@ class InMemoryZoneRepository implements ZoneRepository {
   @override
   Future<void> softDelete(int id) async {
     final i = _zones.indexWhere((z) => z.id == id);
-    if (i != -1) _zones[i] = _zones[i].copyWith(deletedAt: DateTime.now());
+    if (i != -1) {
+      _zones[i] = _zones[i].copyWith(deletedAt: DateTime.now());
+      await _persist();
+    }
   }
 
   @override
   Future<void> restore(int id) async {
     final i = _zones.indexWhere((z) => z.id == id);
-    if (i != -1) _zones[i] = _zones[i].copyWith(clearDeletedAt: true);
+    if (i != -1) {
+      _zones[i] = _zones[i].copyWith(clearDeletedAt: true);
+      await _persist();
+    }
   }
 
   @override
   Future<void> hardDelete(int id) async {
     _zones.removeWhere((z) => z.id == id);
+    await _persist();
   }
 }
