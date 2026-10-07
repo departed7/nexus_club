@@ -12,6 +12,7 @@ import '../repositories/tariff_repository.dart';
 import '../state/computer_list_notifier.dart';
 import '../utils/validators.dart';
 import '../widgets/entity_form_scaffold.dart';
+import '../core/api_exceptions.dart';
 
 class ComputerFormScreen extends StatefulWidget {
   final int? id;
@@ -112,19 +113,6 @@ class _ComputerFormScreenState extends State<ComputerFormScreen> {
     final repo = context.read<ComputerRepository>();
     final notifier = context.read<ComputerListNotifier>();
 
-    final isUnique = await repo.isIpUnique(_ipController.text.trim(), excludeId: widget.id);
-
-    if (!mounted) return;
-
-    if (!isUnique) {
-      setState(() {
-        _isSubmitting = false;
-        _ipUniqueError = 'Этот IP-адрес уже присвоен другому ПК';
-      });
-      _formKey.currentState!.validate();
-      return;
-    }
-
     final computer = Computer(
       id: widget.id ?? 0,
       name: _nameController.text.trim(),
@@ -138,16 +126,32 @@ class _ComputerFormScreenState extends State<ComputerFormScreen> {
       ipAddress: _ipController.text.trim(),
     );
 
-    if (widget.isEditing) {
-      await repo.update(computer);
-    } else {
-      await repo.create(computer);
-    }
+    try {
+      if (widget.isEditing) {
+        await repo.update(computer);
+      } else {
+        await repo.create(computer);
+      }
 
-    if (!mounted) return;
-    await notifier.load();
-    if (!mounted) return;
-    context.go('/computers');
+      if (!mounted) return;
+      await notifier.load();
+      if (!mounted) return;
+      context.go('/computers');
+    } on ValidationException catch (e) {
+      // Сервер вернул 422 Unprocessable Entity (Критерий 9)
+      setState(() {
+        _isSubmitting = false;
+        _ipUniqueError = e.errors['ipAddress'] ?? e.message;
+      });
+      _formKey.currentState!.validate();
+    } on ApiException catch (e) {
+      setState(() => _isSubmitting = false);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.message), backgroundColor: Colors.red),
+        );
+      }
+    }
   }
 
   Widget _buildSectionHeader(String title, IconData icon, Color color) {

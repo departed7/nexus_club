@@ -3,11 +3,12 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../models/computer.dart';
 import '../models/computer_query.dart';
-import '../repositories/zone_repository.dart';
 import '../models/club_zone.dart';
+import '../repositories/zone_repository.dart';
 import '../state/computer_list_notifier.dart';
 import '../widgets/entity_table.dart';
 import '../widgets/pagination_bar.dart';
+import '../widgets/cyber_loader.dart';
 
 class ComputersScreen extends StatefulWidget {
   final Map<String, String> queryParams;
@@ -33,8 +34,12 @@ class _ComputersScreenState extends State<ComputersScreen> {
   }
 
   Future<void> _loadZones() async {
-    final zones = await context.read<ZoneRepository>().findAllActive();
-    if (mounted) setState(() => _zones = zones);
+    try {
+      final zones = await context.read<ZoneRepository>().findAllActive();
+      if (mounted) setState(() => _zones = zones);
+    } catch (_) {
+      // Игнорируем сетевой сбой зон при старте, чтобы не блокировать интерфейс
+    }
   }
 
   void _syncFromUrl() {
@@ -157,7 +162,6 @@ class _ComputersScreenState extends State<ComputersScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Панель фильтров и кнопка создания
             Card(
               child: Padding(
                 padding: const EdgeInsets.all(16),
@@ -303,16 +307,27 @@ class _ComputersScreenState extends State<ComputersScreen> {
               ),
 
             switch (notifier.status) {
-              LoadStatus.loading => const Center(
-                  child: Padding(
-                    padding: EdgeInsets.all(60.0),
-                    child: CircularProgressIndicator(),
-                  ),
-                ),
+              LoadStatus.loading => const CyberLoader(message: 'Загрузка каталога сетапов...'),
               LoadStatus.error => Center(
                   child: Padding(
                     padding: const EdgeInsets.all(40),
-                    child: Text(notifier.error ?? 'Ошибка загрузки данных'),
+                    child: Column(
+                      children: [
+                        const Icon(Icons.cloud_off_rounded, size: 48, color: Color(0xFFE11D48)),
+                        const SizedBox(height: 12),
+                        Text(
+                          notifier.error ?? 'Ошибка загрузки данных с сервера',
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(color: Color(0xFFFB7185), fontSize: 14),
+                        ),
+                        const SizedBox(height: 16),
+                        FilledButton.icon(
+                          onPressed: () => notifier.load(),
+                          icon: const Icon(Icons.refresh_rounded, size: 18),
+                          label: const Text('Повторить попытку'),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               _ when notifier.result.items.isEmpty => const Center(

@@ -9,6 +9,10 @@ final appRouter = GoRouter(
   initialLocation: '/computers',
   routes: [
     GoRoute(
+      path: '/',
+      builder: (context, state) => ComputersScreen(queryParams: state.uri.queryParameters),
+    ),
+    GoRoute(
       path: '/computers',
       builder: (context, state) => ComputersScreen(queryParams: state.uri.queryParameters),
       routes: [
