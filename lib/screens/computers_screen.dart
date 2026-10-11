@@ -4,11 +4,14 @@ import 'package:provider/provider.dart';
 import '../models/computer.dart';
 import '../models/computer_query.dart';
 import '../models/club_zone.dart';
+import '../models/role.dart';
 import '../repositories/zone_repository.dart';
+import '../state/auth_notifier.dart';
 import '../state/computer_list_notifier.dart';
 import '../widgets/entity_table.dart';
 import '../widgets/pagination_bar.dart';
 import '../widgets/cyber_loader.dart';
+import '../widgets/nexus_brand_logo.dart';
 
 class ComputersScreen extends StatefulWidget {
   final Map<String, String> queryParams;
@@ -37,9 +40,7 @@ class _ComputersScreenState extends State<ComputersScreen> {
     try {
       final zones = await context.read<ZoneRepository>().findAllActive();
       if (mounted) setState(() => _zones = zones);
-    } catch (_) {
-      // Игнорируем сетевой сбой зон при старте, чтобы не блокировать интерфейс
-    }
+    } catch (_) {}
   }
 
   void _syncFromUrl() {
@@ -85,72 +86,108 @@ class _ComputersScreenState extends State<ComputersScreen> {
   @override
   Widget build(BuildContext context) {
     final notifier = context.watch<ComputerListNotifier>();
+    final auth = context.watch<AuthNotifier>();
     final q = notifier.query;
 
     return Scaffold(
+      backgroundColor: const Color(0xFF080C16),
       appBar: AppBar(
-        title: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(7),
-              decoration: BoxDecoration(
-                color: const Color(0xFF1E2433),
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: const Color(0xFF2D354B)),
-              ),
-              child: const Icon(Icons.sports_esports_rounded, size: 20, color: Color(0xFF38BDF8)),
-            ),
-            const SizedBox(width: 12),
-            const Text(
-              'Nexus',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, letterSpacing: -0.5),
-            ),
-            const SizedBox(width: 8),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-              decoration: BoxDecoration(
-                color: const Color(0xFF1E2433),
-                borderRadius: BorderRadius.circular(6),
-              ),
-              child: const Text('Admin', style: TextStyle(fontSize: 11, color: Color(0xFF94A3B8))),
-            ),
-          ],
-        ),
+        backgroundColor: const Color(0xFF0D1222),
+        title: const NexusBrandLogo(fontSize: 18, subtitle: 'КАТАЛОГ СЕТАПОВ'),
         actions: [
+          if (auth.user != null)
+            Center(
+              child: Container(
+                margin: const EdgeInsets.only(right: 12),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                decoration: BoxDecoration(
+                  color: auth.user!.role == Role.admin
+                      ? const Color(0x2EFBBF24)
+                      : const Color(0x2E6366F1),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: auth.user!.role == Role.admin
+                        ? const Color(0x66FBBF24)
+                        : const Color(0x66818CF8),
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      auth.user!.role == Role.admin ? Icons.shield_rounded : Icons.person_rounded,
+                      size: 14,
+                      color: auth.user!.role == Role.admin ? const Color(0xFFFBBF24) : const Color(0xFF818CF8),
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      '${auth.user!.username} (${auth.user!.role.label})',
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                        color: auth.user!.role == Role.admin ? const Color(0xFFFBBF24) : Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           Container(
             margin: const EdgeInsets.only(right: 16),
             padding: const EdgeInsets.all(3),
             decoration: BoxDecoration(
-              color: const Color(0xFF10121A),
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: const Color(0xFF232838)),
+              color: const Color(0xFF080C16),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: const Color(0xFF1E283D)),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
+                InkWell(
+                  onTap: () => context.go('/dashboard'),
+                  borderRadius: BorderRadius.circular(8),
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                    child: Text('Главная', style: TextStyle(fontSize: 13, color: Color(0xFF94A3B8))),
+                  ),
+                ),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF1E2433),
-                    borderRadius: BorderRadius.circular(6),
+                    color: const Color(0xFFFF5500),
+                    borderRadius: BorderRadius.circular(8),
                   ),
                   child: const Text('Компьютеры', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.white)),
                 ),
                 InkWell(
                   onTap: () => context.go('/zones'),
-                  borderRadius: BorderRadius.circular(6),
+                  borderRadius: BorderRadius.circular(8),
                   child: const Padding(
                     padding: EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                    child: Text('Зоны клуба', style: TextStyle(fontSize: 13, color: Color(0xFF94A3B8))),
+                    child: Text('Зоны зала', style: TextStyle(fontSize: 13, color: Color(0xFF94A3B8))),
                   ),
                 ),
                 InkWell(
                   onTap: () => context.go('/members'),
-                  borderRadius: BorderRadius.circular(6),
+                  borderRadius: BorderRadius.circular(8),
                   child: const Padding(
                     padding: EdgeInsets.symmetric(horizontal: 14, vertical: 6),
                     child: Text('Клиенты', style: TextStyle(fontSize: 13, color: Color(0xFF94A3B8))),
                   ),
+                ),
+                if (auth.has(Role.admin))
+                  InkWell(
+                    onTap: () => context.go('/admin/users'),
+                    borderRadius: BorderRadius.circular(8),
+                    child: const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                      child: Text('Персонал', style: TextStyle(fontSize: 13, color: Color(0xFFFF5500), fontWeight: FontWeight.bold)),
+                    ),
+                  ),
+                IconButton(
+                  tooltip: 'Выход',
+                  icon: const Icon(Icons.logout_rounded, size: 18, color: Color(0xFFEF4444)),
+                  onPressed: () => auth.logout(),
                 ),
               ],
             ),
@@ -163,6 +200,11 @@ class _ComputersScreenState extends State<ComputersScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Card(
+              color: const Color(0xFF0F1527),
+              shape: RoundedRectangleBorder(
+                side: const BorderSide(color: Color(0xFF1E2842)),
+                borderRadius: BorderRadius.circular(16),
+              ),
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: Column(
@@ -172,9 +214,16 @@ class _ComputersScreenState extends State<ComputersScreen> {
                         Expanded(
                           child: TextField(
                             controller: _searchController,
+                            style: const TextStyle(fontSize: 14, color: Colors.white),
                             decoration: InputDecoration(
                               hintText: 'Поиск по названию ПК, видеокарте или процессору...',
-                              prefixIcon: const Icon(Icons.search_rounded, size: 20),
+                              prefixIcon: const Icon(Icons.search_rounded, size: 20, color: Color(0xFFFF5500)),
+                              filled: true,
+                              fillColor: const Color(0xFF080C16),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: const BorderSide(color: Color(0xFF1E2842)),
+                              ),
                               suffixIcon: _searchController.text.isNotEmpty
                                   ? IconButton(
                                       icon: const Icon(Icons.clear, size: 18),
@@ -193,12 +242,20 @@ class _ComputersScreenState extends State<ComputersScreen> {
                             },
                           ),
                         ),
-                        const SizedBox(width: 12),
-                        FilledButton.icon(
-                          onPressed: () => context.go('/computers/new'),
-                          icon: const Icon(Icons.add_rounded, size: 20),
-                          label: const Text('Добавить ПК'),
-                        ),
+                        if (auth.has(Role.operator)) ...[
+                          const SizedBox(width: 12),
+                          FilledButton.icon(
+                            style: FilledButton.styleFrom(
+                              backgroundColor: const Color(0xFFFF5500),
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                            ),
+                            onPressed: () => context.go('/computers/new'),
+                            icon: const Icon(Icons.add_rounded, size: 20),
+                            label: const Text('Добавить ПК', style: TextStyle(fontWeight: FontWeight.bold)),
+                          ),
+                        ],
                       ],
                     ),
                     const SizedBox(height: 14),
@@ -211,14 +268,14 @@ class _ComputersScreenState extends State<ComputersScreen> {
                           height: 38,
                           padding: const EdgeInsets.symmetric(horizontal: 12),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF10121A),
+                            color: const Color(0xFF080C16),
                             borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: const Color(0xFF282E40)),
+                            border: Border.all(color: const Color(0xFF1E2842)),
                           ),
                           child: DropdownButtonHideUnderline(
                             child: DropdownButton<int?>(
                               value: q.zoneId,
-                              dropdownColor: const Color(0xFF161922),
+                              dropdownColor: const Color(0xFF0F1527),
                               hint: const Text('Все зоны зала', style: TextStyle(fontSize: 13, color: Color(0xFF94A3B8))),
                               items: [
                                 const DropdownMenuItem(value: null, child: Text('Все зоны зала', style: TextStyle(fontSize: 13))),
@@ -235,14 +292,14 @@ class _ComputersScreenState extends State<ComputersScreen> {
                           height: 38,
                           padding: const EdgeInsets.symmetric(horizontal: 12),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF10121A),
+                            color: const Color(0xFF080C16),
                             borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: const Color(0xFF282E40)),
+                            border: Border.all(color: const Color(0xFF1E2842)),
                           ),
                           child: DropdownButtonHideUnderline(
                             child: DropdownButton<bool?>(
                               value: q.isVip,
-                              dropdownColor: const Color(0xFF161922),
+                              dropdownColor: const Color(0xFF0F1527),
                               hint: const Text('Все тарифы', style: TextStyle(fontSize: 13, color: Color(0xFF94A3B8))),
                               items: const [
                                 DropdownMenuItem(value: null, child: Text('Все тарифы', style: TextStyle(fontSize: 13))),
@@ -257,11 +314,11 @@ class _ComputersScreenState extends State<ComputersScreen> {
                           ),
                         ),
                         FilterChip(
-                          backgroundColor: const Color(0xFF10121A),
-                          side: BorderSide(color: q.includeDeleted ? const Color(0xFFE11D48) : const Color(0xFF282E40)),
+                          backgroundColor: const Color(0xFF080C16),
+                          side: BorderSide(color: q.includeDeleted ? const Color(0xFFEF4444) : const Color(0xFF1E2842)),
                           label: Text(
                             'Показать архивные',
-                            style: TextStyle(fontSize: 13, color: q.includeDeleted ? const Color(0xFFFB7185) : const Color(0xFF94A3B8)),
+                            style: TextStyle(fontSize: 13, color: q.includeDeleted ? const Color(0xFFF87171) : const Color(0xFF94A3B8)),
                           ),
                           selected: q.includeDeleted,
                           onSelected: (val) {
@@ -277,22 +334,22 @@ class _ComputersScreenState extends State<ComputersScreen> {
             ),
             const SizedBox(height: 16),
 
-            if (notifier.hasSelection)
+            if (notifier.hasSelection && auth.has(Role.operator))
               Container(
                 margin: const EdgeInsets.only(bottom: 12),
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF27151A),
-                  border: Border.all(color: const Color(0xFF5C1D29)),
-                  borderRadius: BorderRadius.circular(8),
+                  color: const Color(0xFF2E1319),
+                  border: Border.all(color: const Color(0xFF7F1D1D)),
+                  borderRadius: BorderRadius.circular(10),
                 ),
                 child: Row(
                   children: [
-                    Text('Выбрано записей: ${notifier.selected.length}',
+                    Text('Выбрано ПК: ${notifier.selected.length}',
                         style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
                     const Spacer(),
                     FilledButton.icon(
-                      style: FilledButton.styleFrom(backgroundColor: const Color(0xFFE11D48)),
+                      style: FilledButton.styleFrom(backgroundColor: const Color(0xFFEF4444)),
                       icon: const Icon(Icons.delete_outline, size: 18),
                       label: const Text('Удалить выбранные', style: TextStyle(fontSize: 13)),
                       onPressed: () async {
@@ -313,12 +370,12 @@ class _ComputersScreenState extends State<ComputersScreen> {
                     padding: const EdgeInsets.all(40),
                     child: Column(
                       children: [
-                        const Icon(Icons.cloud_off_rounded, size: 48, color: Color(0xFFE11D48)),
+                        const Icon(Icons.cloud_off_rounded, size: 48, color: Color(0xFFEF4444)),
                         const SizedBox(height: 12),
                         Text(
                           notifier.error ?? 'Ошибка загрузки данных с сервера',
                           textAlign: TextAlign.center,
-                          style: const TextStyle(color: Color(0xFFFB7185), fontSize: 14),
+                          style: const TextStyle(color: Color(0xFFF87171), fontSize: 14),
                         ),
                         const SizedBox(height: 16),
                         FilledButton.icon(
@@ -351,7 +408,7 @@ class _ComputersScreenState extends State<ComputersScreen> {
                       items: notifier.result.items,
                       idOf: (c) => c.id,
                       selected: notifier.selected,
-                      onToggleSelect: (id) => notifier.toggleSelection(id),
+                      onToggleSelect: auth.has(Role.operator) ? (id) => notifier.toggleSelection(id) : null,
                       sortField: q.sortField,
                       sortAscending: q.sortAscending,
                       onSort: (field) {
@@ -362,25 +419,6 @@ class _ComputersScreenState extends State<ComputersScreen> {
                         ));
                         _pushQueryToUrl(notifier.query);
                       },
-                      mobileCardBuilder: (c) => Card(
-                        child: ListTile(
-                          title: Text(c.name, style: const TextStyle(fontWeight: FontWeight.bold)),
-                          subtitle: Text('${c.gpu} • ${c.cpu}\nТариф: ${c.hourlyRate.toInt()} ₽/ч\nIP: ${c.ipAddress}'),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              IconButton(
-                                icon: const Icon(Icons.edit_outlined, size: 20),
-                                onPressed: () => context.go('/computers/${c.id}/edit'),
-                              ),
-                              IconButton(
-                                icon: Icon(c.isDeleted ? Icons.restore_from_trash_rounded : Icons.delete_outline),
-                                onPressed: () => c.isDeleted ? notifier.restore(c.id) : notifier.softDelete(c.id),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
                       columns: [
                         TableColumnSpec<Computer>(
                           label: 'Компьютер',
@@ -393,17 +431,17 @@ class _ComputersScreenState extends State<ComputersScreen> {
                                 const SizedBox(width: 8),
                                 Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                  decoration: const BoxDecoration(
-                                    color: Color(0xFF2C2210),
-                                    border: Border.fromBorderSide(BorderSide(color: Color(0xFF785412))),
-                                    borderRadius: BorderRadius.all(Radius.circular(4)),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0x26FBBF24),
+                                    border: Border.all(color: const Color(0x66FBBF24)),
+                                    borderRadius: BorderRadius.circular(4),
                                   ),
                                   child: const Text('VIP', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Color(0xFFFBBF24))),
                                 ),
                               ],
                               if (c.isDeleted) ...[
                                 const SizedBox(width: 8),
-                                const Text('(В архиве)', style: TextStyle(color: Color(0xFFFB7185), fontSize: 11)),
+                                const Text('(В архиве)', style: TextStyle(color: Color(0xFFF87171), fontSize: 11)),
                               ],
                             ],
                           ),
@@ -417,9 +455,10 @@ class _ComputersScreenState extends State<ComputersScreen> {
                           sortField: 'gpu',
                           build: (c) => Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                            decoration: const BoxDecoration(
-                              color: Color(0xFF1E2230),
-                              borderRadius: BorderRadius.all(Radius.circular(6)),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF131A2F),
+                              borderRadius: BorderRadius.circular(6),
+                              border: Border.all(color: const Color(0xFF1F2B4B)),
                             ),
                             child: Text(c.gpu, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Color(0xFFE2E8F0))),
                           ),
@@ -440,35 +479,38 @@ class _ComputersScreenState extends State<ComputersScreen> {
                           numeric: true,
                           build: (c) => Text(
                             '${c.hourlyRate.toInt()} ₽/ч',
-                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Color(0xFF38BDF8)),
+                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Color(0xFFFF5500)),
                           ),
                         ),
                       ],
-                      actions: (c) => [
-                        IconButton(
-                          tooltip: 'Редактировать сетап',
-                          icon: const Icon(Icons.edit_outlined, size: 19, color: Color(0xFF38BDF8)),
-                          onPressed: () => context.go('/computers/${c.id}/edit'),
-                        ),
-                        if (!c.isDeleted)
-                          IconButton(
-                            tooltip: 'Отправить в архив',
-                            icon: const Icon(Icons.delete_outline, size: 19, color: Color(0xFF94A3B8)),
-                            onPressed: () => notifier.softDelete(c.id),
-                          )
-                        else ...[
-                          IconButton(
-                            tooltip: 'Восстановить',
-                            icon: const Icon(Icons.restore, size: 19, color: Color(0xFF34D399)),
-                            onPressed: () => notifier.restore(c.id),
-                          ),
-                          IconButton(
-                            tooltip: 'Удалить навсегда',
-                            icon: const Icon(Icons.delete_forever, size: 19, color: Color(0xFFFB7185)),
-                            onPressed: () => notifier.hardDelete(c.id),
-                          ),
-                        ],
-                      ],
+                      actions: auth.has(Role.operator)
+                          ? (c) => [
+                              IconButton(
+                                tooltip: 'Редактировать',
+                                icon: const Icon(Icons.edit_outlined, size: 19, color: Color(0xFF38BDF8)),
+                                onPressed: () => context.go('/computers/${c.id}/edit'),
+                              ),
+                              if (!c.isDeleted)
+                                IconButton(
+                                  tooltip: 'В архив',
+                                  icon: const Icon(Icons.delete_outline, size: 19, color: Color(0xFF94A3B8)),
+                                  onPressed: () => notifier.softDelete(c.id),
+                                )
+                              else ...[
+                                IconButton(
+                                  tooltip: 'Восстановить',
+                                  icon: const Icon(Icons.restore, size: 19, color: Color(0xFF10B981)),
+                                  onPressed: () => notifier.restore(c.id),
+                                ),
+                                if (auth.has(Role.admin))
+                                  IconButton(
+                                    tooltip: 'Удалить навсегда (Admin)',
+                                    icon: const Icon(Icons.delete_forever, size: 19, color: Color(0xFFEF4444)),
+                                    onPressed: () => notifier.hardDelete(c.id),
+                                  ),
+                              ],
+                            ]
+                          : null,
                     ),
                     const SizedBox(height: 14),
                     PaginationBar(

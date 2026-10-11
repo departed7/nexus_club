@@ -37,11 +37,10 @@ class _CyberLoaderState extends State<CyberLoader> with SingleTickerProviderStat
             color: const Color(0xFF111726),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(color: const Color(0xFF1E283D)),
-            boxShadow: [
+            boxShadow: const [
               BoxShadow(
-                color: Colors.black.withOpacity(0.4),
-                blurRadius: 20,
-                offset: const Offset(0, 10),
+                color: Color(0x66000000),                blurRadius: 20,
+                offset: Offset(0, 10),
               ),
             ],
           ),

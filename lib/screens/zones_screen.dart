@@ -7,6 +7,7 @@ import '../repositories/computer_repository.dart';
 import '../state/zone_list_notifier.dart';
 import '../widgets/entity_table.dart';
 import '../widgets/pagination_bar.dart';
+import '../widgets/nexus_brand_logo.dart';
 
 class ZonesScreen extends StatefulWidget {
   final Map<String, String> queryParams;
@@ -49,7 +50,6 @@ class _ZonesScreenState extends State<ZonesScreen> {
     context.go(uri.toString());
   }
 
-  // Проверка удаления связанной сущности (Критерий 13)
   Future<void> _handleDeleteZone(ClubZone zone) async {
     final compRepo = context.read<ComputerRepository>();
     final linkedComputersCount = await compRepo.countByZoneId(zone.id);
@@ -59,19 +59,18 @@ class _ZonesScreenState extends State<ZonesScreen> {
       showDialog(
         context: context,
         builder: (ctx) => AlertDialog(
-          backgroundColor: const Color(0xFF161922),
+          backgroundColor: const Color(0xFF0F1527),
           title: const Row(
             children: [
-              Icon(Icons.warning_amber_rounded, color: Color(0xFFFBBF24)),
+              Icon(Icons.warning_amber_rounded, color: Color(0xFFFF5500)),
               SizedBox(width: 8),
               Text('Невозможно удалить зону'),
             ],
           ),
-          content: Text(
-            'К зоне "${zone.name}" привязано $linkedComputersCount игровых компьютеров.\n\nПеред удалением перенесите компьютеры в другую зону.',
-          ),
+          content: Text('К зоне "${zone.name}" привязано $linkedComputersCount ПК.\nПеренесите компьютеры перед удалением.'),
           actions: [
             FilledButton(
+              style: FilledButton.styleFrom(backgroundColor: const Color(0xFFFF5500)),
               onPressed: () => Navigator.of(ctx).pop(),
               child: const Text('Понятно'),
             ),
@@ -81,9 +80,7 @@ class _ZonesScreenState extends State<ZonesScreen> {
       return;
     }
 
-    if (mounted) {
-      context.read<ZoneListNotifier>().softDelete(zone.id);
-    }
+    if (mounted) context.read<ZoneListNotifier>().softDelete(zone.id);
   }
 
   @override
@@ -98,48 +95,27 @@ class _ZonesScreenState extends State<ZonesScreen> {
     final q = notifier.query;
 
     return Scaffold(
+      backgroundColor: const Color(0xFF080C16),
       appBar: AppBar(
-        title: const Text('Зоны зала'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.go('/computers'),
-        ),
+        backgroundColor: const Color(0xFF0D1222),
+        title: const NexusBrandLogo(fontSize: 18, subtitle: 'ЗОНЫ И ТАРИФЫ'),
+        leading: IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => context.go('/dashboard')),
         actions: [
           Container(
             margin: const EdgeInsets.only(right: 16),
             padding: const EdgeInsets.all(3),
             decoration: BoxDecoration(
-              color: const Color(0xFF10121A),
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: const Color(0xFF232838)),
+              color: const Color(0xFF080C16),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: const Color(0xFF1E283D)),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                InkWell(
-                  onTap: () => context.go('/computers'),
-                  borderRadius: BorderRadius.circular(6),
-                  child: const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                    child: Text('Компьютеры', style: TextStyle(fontSize: 13, color: Color(0xFF94A3B8))),
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF1E2433),
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: const Text('Зоны клуба', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.white)),
-                ),
-                InkWell(
-                  onTap: () => context.go('/members'),
-                  borderRadius: BorderRadius.circular(6),
-                  child: const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                    child: Text('Клиенты', style: TextStyle(fontSize: 13, color: Color(0xFF94A3B8))),
-                  ),
-                ),
+                InkWell(onTap: () => context.go('/dashboard'), child: const Padding(padding: EdgeInsets.symmetric(horizontal: 14, vertical: 6), child: Text('Главная', style: TextStyle(color: Color(0xFF94A3B8), fontSize: 13)))),
+                InkWell(onTap: () => context.go('/computers'), child: const Padding(padding: EdgeInsets.symmetric(horizontal: 14, vertical: 6), child: Text('Компьютеры', style: TextStyle(color: Color(0xFF94A3B8), fontSize: 13)))),
+                Container(padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6), decoration: BoxDecoration(color: const Color(0xFFFF5500), borderRadius: BorderRadius.circular(8)), child: const Text('Зоны зала', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13))),
+                InkWell(onTap: () => context.go('/members'), child: const Padding(padding: EdgeInsets.symmetric(horizontal: 14, vertical: 6), child: Text('Клиенты', style: TextStyle(color: Color(0xFF94A3B8), fontSize: 13)))),
               ],
             ),
           ),
@@ -150,13 +126,18 @@ class _ZonesScreenState extends State<ZonesScreen> {
         child: Column(
           children: [
             Card(
+              color: const Color(0xFF0F1527),
+              shape: RoundedRectangleBorder(side: const BorderSide(color: Color(0xFF1E2842)), borderRadius: BorderRadius.circular(16)),
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: TextField(
                   controller: _searchController,
+                  style: const TextStyle(fontSize: 14, color: Colors.white),
                   decoration: const InputDecoration(
                     hintText: 'Поиск по названию или описанию зоны...',
-                    prefixIcon: Icon(Icons.search_rounded, size: 20),
+                    prefixIcon: Icon(Icons.search_rounded, color: Color(0xFFFF5500)),
+                    filled: true,
+                    fillColor: Color(0xFF080C16),
                   ),
                   onChanged: (text) {
                     notifier.applyQuery(q.copyWith(search: text));
@@ -172,37 +153,16 @@ class _ZonesScreenState extends State<ZonesScreen> {
               sortField: q.sortField,
               sortAscending: q.sortAscending,
               onSort: (field) {
-                final isSame = q.sortField == field;
-                notifier.applyQuery(q.copyWith(
-                  sortField: field,
-                  sortAscending: isSame ? !q.sortAscending : true,
-                ));
+                notifier.applyQuery(q.copyWith(sortField: field, sortAscending: q.sortField == field ? !q.sortAscending : true));
                 _pushQueryToUrl(notifier.query);
               },
               columns: [
-                TableColumnSpec<ClubZone>(
-                  label: 'Зона клуба',
-                  sortField: 'name',
-                  build: (z) => Text(z.name, style: const TextStyle(fontWeight: FontWeight.bold)),
-                ),
-                TableColumnSpec<ClubZone>(
-                  label: 'Описание и оснащение',
-                  build: (z) => Text(z.description, style: const TextStyle(fontSize: 13, color: Color(0xFF94A3B8))),
-                ),
-                TableColumnSpec<ClubZone>(
-                  label: 'Тариф',
-                  sortField: 'price',
-                  numeric: true,
-                  build: (z) => Text('${z.hourlyPrice.toInt()} ₽/ч',
-                      style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF38BDF8), fontSize: 14)),
-                ),
+                TableColumnSpec<ClubZone>(label: 'Зона клуба', sortField: 'name', build: (z) => Text(z.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14))),
+                TableColumnSpec<ClubZone>(label: 'Описание и оснащение', build: (z) => Text(z.description, style: const TextStyle(fontSize: 13, color: Color(0xFF94A3B8)))),
+                TableColumnSpec<ClubZone>(label: 'Тариф', sortField: 'price', numeric: true, build: (z) => Text('${z.hourlyPrice.toInt()} ₽/ч', style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFFFF5500), fontSize: 14))),
               ],
               actions: (z) => [
-                IconButton(
-                  tooltip: 'Удалить зону (Проверка связей)',
-                  icon: const Icon(Icons.delete_outline, size: 20, color: Color(0xFF94A3B8)),
-                  onPressed: () => _handleDeleteZone(z),
-                ),
+                IconButton(tooltip: 'Удалить зону', icon: const Icon(Icons.delete_outline, size: 20, color: Color(0xFF94A3B8)), onPressed: () => _handleDeleteZone(z)),
               ],
             ),
             const SizedBox(height: 14),
