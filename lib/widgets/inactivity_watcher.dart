@@ -10,7 +10,7 @@ class InactivityWatcher extends StatefulWidget {
 
   const InactivityWatcher({
     super.key,
-    this.timeout = const Duration(seconds: 20), // 20 секунд общего таймаута
+    this.timeout = const Duration(minutes: 1), // Ровно 1 минута
     required this.onTimeout,
     required this.child,
   });
@@ -23,7 +23,7 @@ class _InactivityWatcherState extends State<InactivityWatcher> {
   Timer? _timer;
   Timer? _warningTimer;
   Timer? _countdownTicker;
-  int _secondsLeft = 12;
+  int _secondsLeft = 15;
   bool _isWarningOpen = false;
 
   @override
@@ -53,8 +53,8 @@ class _InactivityWatcherState extends State<InactivityWatcher> {
 
   void _restartTimers() {
     _cancelAll();
-    // Предупреждение выскочит уже через 8 секунд бездействия
-    _warningTimer = Timer(const Duration(seconds: 8), _showCountdownDialog);
+    // Предупреждение выскочит за 15 секунд до конца (на 45-й секунде!)
+    _warningTimer = Timer(const Duration(seconds: 45), _showCountdownDialog);
     _timer = Timer(widget.timeout, _handleTimeout);
   }
 
@@ -73,7 +73,7 @@ class _InactivityWatcherState extends State<InactivityWatcher> {
     if (navContext == null) return;
 
     _isWarningOpen = true;
-    _secondsLeft = 12;
+    _secondsLeft = 15;
 
     showDialog(
       context: navContext,

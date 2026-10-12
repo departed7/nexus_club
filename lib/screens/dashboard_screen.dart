@@ -61,13 +61,37 @@ class _DashboardScreenState extends State<DashboardScreen> {
             if (isAdmin)
               TextButton(onPressed: () => context.go('/admin/users'), child: const Text('Персонал', style: TextStyle(color: Color(0xFFFF5500)))),
             const SizedBox(width: 8),
+
+            // Кнопка быстрого перехода в Профиль
+            InkWell(
+              onTap: () => context.go('/profile'),
+              borderRadius: BorderRadius.circular(20),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF151D33),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: const Color(0xFF283654)),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.account_circle_outlined, size: 18, color: Color(0xFFFF5500)),
+                    const SizedBox(width: 6),
+                    Text(user?.username ?? 'Профиль', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white)),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+
             Container(
               margin: const EdgeInsets.symmetric(vertical: 8),
               child: FilledButton(
                 style: FilledButton.styleFrom(
                   backgroundColor: const Color(0xFFFF5500),
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 18),
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                 ),
                 onPressed: () => showBookingModal(context),
@@ -100,7 +124,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   case 3:
                     context.go('/members');
                   case 4:
-                    context.go('/admin/users');
+                    context.go('/profile');
                 }
               },
               destinations: [
@@ -108,8 +132,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 const NavigationDestination(icon: Icon(Icons.desktop_windows_outlined), selectedIcon: Icon(Icons.desktop_windows, color: Colors.white), label: 'ПК'),
                 const NavigationDestination(icon: Icon(Icons.layers_outlined), selectedIcon: Icon(Icons.layers, color: Colors.white), label: 'Зоны'),
                 const NavigationDestination(icon: Icon(Icons.badge_outlined), selectedIcon: Icon(Icons.badge, color: Colors.white), label: 'Игроки'),
-                if (isAdmin)
-                  const NavigationDestination(icon: Icon(Icons.admin_panel_settings_outlined), selectedIcon: Icon(Icons.admin_panel_settings, color: Colors.white), label: 'Админ'),
+                const NavigationDestination(icon: Icon(Icons.person_outline), selectedIcon: Icon(Icons.person, color: Colors.white), label: 'Профиль'),
               ],
             )
           : null,
@@ -133,24 +156,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      if (isMobile) ...[
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                          margin: const EdgeInsets.only(bottom: 16),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF131B30),
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: const Color(0xFF1E2B48)),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text('СЕССИЯ: ${user?.username.toUpperCase()}', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 12)),
-                              Text(role.label, style: const TextStyle(color: Color(0xFFFF5500), fontSize: 11, fontWeight: FontWeight.bold)),
-                            ],
-                          ),
-                        ),
-                      ],
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -197,8 +202,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               ],
                             ),
                           ),
-                          if (!isMobile) ...[
-                            Container(
+                          // КЛИКАБЕЛЬНЫЙ БЛОК ПРОФИЛЯ
+                          InkWell(
+                            onTap: () => context.go('/profile'),
+                            borderRadius: BorderRadius.circular(16),
+                            child: Container(
                               padding: const EdgeInsets.all(16),
                               decoration: BoxDecoration(
                                 color: const Color(0xFF131B30),
@@ -208,13 +216,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
-                                  Text('СЕССИЯ: ${user?.username.toUpperCase()}', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 13)),
+                                  Row(
+                                    children: [
+                                      const Icon(Icons.arrow_forward_ios_rounded, size: 10, color: Color(0xFF94A3B8)),
+                                      const SizedBox(width: 4),
+                                      Text('ПРОФИЛЬ: ${user?.username.toUpperCase()}', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 12)),
+                                    ],
+                                  ),
                                   const SizedBox(height: 4),
                                   Text(role.label, style: const TextStyle(color: Color(0xFFFF5500), fontSize: 12, fontWeight: FontWeight.bold)),
                                 ],
                               ),
                             ),
-                          ],
+                          ),
                         ],
                       ),
                       const SizedBox(height: 28),
@@ -354,7 +368,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
             ),
 
-            // 3. БЛОК ИГР (БЕЗ ПЕРЕПОЛНЕНИЯ)
+            // 3. БЛОК ИГР
             Container(
               color: const Color(0xFF0B101E),
               padding: EdgeInsets.symmetric(vertical: isMobile ? 32 : 48),
@@ -583,7 +597,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  // Вертикальная верстка постера (никогда не переполняется)
   Widget _buildVectorPoster({
     required String title,
     required String tag,
