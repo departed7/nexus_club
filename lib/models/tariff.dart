@@ -50,6 +50,8 @@ class Tariff {
         zoneId: json['zoneId'] as int? ?? 1,
         durationHours: json['durationHours'] as int? ?? 1,
         price: (json['price'] as num?)?.toDouble() ?? 100.0,
-        deletedAt: json['deletedAt'] == null ? null : DateTime.parse(json['deletedAt'] as String),
+        deletedAt: json['deletedAt'] == null
+            ? null
+            : DateTime.parse(json['deletedAt'] as String),
       );
 }

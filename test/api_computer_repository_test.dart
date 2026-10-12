@@ -39,10 +39,12 @@ void main() {
   group('Тестирование ApiComputerRepository (Критерий 17)', () {
     test('1. Успешная загрузка списка и разбор JSON', () async {
       adapter.handler = (opt) => ResponseBody.fromString(
-        '{"items": [{"id": 1, "name": "PC-1", "gpu": "RTX 4060", "cpu": "i5", "ramGb": 16, "zoneId": 1, "hourlyRate": 150, "isVip": false, "ipAddress": "192.168.1.1"}], "total": 1, "page": 1, "size": 10}',
-        200,
-        headers: {'content-type': ['application/json; charset=utf-8']},
-      );
+            '{"items": [{"id": 1, "name": "PC-1", "gpu": "RTX 4060", "cpu": "i5", "ramGb": 16, "zoneId": 1, "hourlyRate": 150, "isVip": false, "ipAddress": "192.168.1.1"}], "total": 1, "page": 1, "size": 10}',
+            200,
+            headers: {
+              'content-type': ['application/json; charset=utf-8']
+            },
+          );
 
       final res = await repository.find(const ComputerQuery());
       expect(res.items.length, 1);
@@ -51,10 +53,12 @@ void main() {
 
     test('2. Разбор ошибки 422 (ValidationException)', () async {
       adapter.handler = (opt) => ResponseBody.fromString(
-        '{"message": "Ошибка", "errors": {"ipAddress": "Дубликат IP"}}',
-        422,
-        headers: {'content-type': ['application/json; charset=utf-8']},
-      );
+            '{"message": "Ошибка", "errors": {"ipAddress": "Дубликат IP"}}',
+            422,
+            headers: {
+              'content-type': ['application/json; charset=utf-8']
+            },
+          );
 
       const comp = Computer(
         id: 0,
@@ -76,10 +80,12 @@ void main() {
 
     test('3. Разбор ошибки 409 (ConflictException)', () async {
       adapter.handler = (opt) => ResponseBody.fromString(
-        '{"message": "Конфликт связей"}',
-        409,
-        headers: {'content-type': ['application/json; charset=utf-8']},
-      );
+            '{"message": "Конфликт связей"}',
+            409,
+            headers: {
+              'content-type': ['application/json; charset=utf-8']
+            },
+          );
 
       expect(
         () async => await repository.hardDelete(1),
@@ -89,9 +95,9 @@ void main() {
 
     test('4. Обработка недоступности сервера (NetworkException)', () async {
       adapter.handler = (opt) => throw DioException(
-        requestOptions: opt,
-        type: DioExceptionType.connectionError,
-      );
+            requestOptions: opt,
+            type: DioExceptionType.connectionError,
+          );
 
       expect(
         () async => await repository.find(const ComputerQuery()),
@@ -101,10 +107,12 @@ void main() {
 
     test('5. Обработка ошибки сервера 500 (ServerException)', () async {
       adapter.handler = (opt) => ResponseBody.fromString(
-        '{"message": "Internal Error"}',
-        500,
-        headers: {'content-type': ['application/json; charset=utf-8']},
-      );
+            '{"message": "Internal Error"}',
+            500,
+            headers: {
+              'content-type': ['application/json; charset=utf-8']
+            },
+          );
 
       expect(
         () async => await repository.find(const ComputerQuery()),

@@ -10,20 +10,24 @@ void main() {
     });
 
     test('2. Роль gamer имеет доступ только к уровню gamer', () {
-      const gamerUser = AppUser(id: 3, username: 'p1', email: 'p@c.ru', role: Role.gamer);
+      const gamerUser =
+          AppUser(id: 3, username: 'p1', email: 'p@c.ru', role: Role.gamer);
       expect(gamerUser.role.level >= Role.gamer.level, true);
       expect(gamerUser.role.level >= Role.operator.level, false);
       expect(gamerUser.role.level >= Role.admin.level, false);
     });
 
-    test('3. Роль operator имеет доступ к управлению ПК, но не к панели админа', () {
-      const opUser = AppUser(id: 2, username: 'op', email: 'op@c.ru', role: Role.operator);
+    test('3. Роль operator имеет доступ к управлению ПК, но не к панели админа',
+        () {
+      const opUser =
+          AppUser(id: 2, username: 'op', email: 'op@c.ru', role: Role.operator);
       expect(opUser.role.level >= Role.operator.level, true);
       expect(opUser.role.level >= Role.admin.level, false);
     });
 
     test('4. Роль admin обладает наивысшим уровнем доступа', () {
-      const adminUser = AppUser(id: 1, username: 'adm', email: 'a@c.ru', role: Role.admin);
+      const adminUser =
+          AppUser(id: 1, username: 'adm', email: 'a@c.ru', role: Role.admin);
       expect(adminUser.role.level >= Role.gamer.level, true);
       expect(adminUser.role.level >= Role.operator.level, true);
       expect(adminUser.role.level >= Role.admin.level, true);

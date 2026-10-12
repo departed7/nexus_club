@@ -41,7 +41,8 @@ class PaginationBar extends StatelessWidget {
           final leftBlock = Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text('Строк:', style: TextStyle(color: Color(0xFF8B949E), fontSize: 13)),
+              const Text('Строк:',
+                  style: TextStyle(color: Color(0xFF8B949E), fontSize: 13)),
               const SizedBox(width: 8),
               Container(
                 height: 34,
@@ -54,8 +55,12 @@ class PaginationBar extends StatelessWidget {
                 child: DropdownButtonHideUnderline(
                   child: DropdownButton<int>(
                     value: size,
-                    icon: const Icon(Icons.keyboard_arrow_down_rounded, size: 18, color: Color(0xFF8B949E)),
-                    style: const TextStyle(color: Color(0xFFC9D1D9), fontSize: 13, fontWeight: FontWeight.bold),
+                    icon: const Icon(Icons.keyboard_arrow_down_rounded,
+                        size: 18, color: Color(0xFF8B949E)),
+                    style: const TextStyle(
+                        color: Color(0xFFC9D1D9),
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold),
                     dropdownColor: const Color(0xFF161B22),
                     items: const [
                       DropdownMenuItem(value: 10, child: Text('10')),
@@ -80,7 +85,8 @@ class PaginationBar extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
                   color: const Color(0xFF0D1117),
                   borderRadius: BorderRadius.circular(8),
@@ -88,7 +94,10 @@ class PaginationBar extends StatelessWidget {
                 ),
                 child: Text(
                   'Стр. $page из $totalPages',
-                  style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: Color(0xFF00F0FF)),
+                  style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 13,
+                      color: Color(0xFF00F0FF)),
                 ),
               ),
               const SizedBox(width: 12),
@@ -166,16 +175,19 @@ class _PageButton extends StatelessWidget {
           width: 34,
           height: 34,
           decoration: BoxDecoration(
-            color: isEnabled ? const Color(0xFF0D1117) : const Color(0xFF161B22),
+            color:
+                isEnabled ? const Color(0xFF0D1117) : const Color(0xFF161B22),
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
-              color: isEnabled ? const Color(0xFF30363D) : const Color(0xFF21262D),
+              color:
+                  isEnabled ? const Color(0xFF30363D) : const Color(0xFF21262D),
             ),
           ),
           child: Icon(
             icon,
             size: 18,
-            color: isEnabled ? const Color(0xFFC9D1D9) : const Color(0xFF484F58),
+            color:
+                isEnabled ? const Color(0xFFC9D1D9) : const Color(0xFF484F58),
           ),
         ),
       ),

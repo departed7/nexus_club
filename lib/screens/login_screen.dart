@@ -75,8 +75,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 color: const Color(0xFF0F1527),
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(color: const Color(0xFF1E2842)),
-                boxShadow: [
-                  BoxShadow(color: Colors.black.withOpacity(0.6), blurRadius: 40, offset: const Offset(0, 15)),
+                boxShadow: const [
+                  BoxShadow(color: Color(0x99000000), blurRadius: 40, offset: Offset(0, 15)),
                 ],
               ),
               clipBehavior: Clip.antiAlias,
@@ -84,7 +84,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // Левая промо-колонка
                     Expanded(
                       flex: 5,
                       child: Container(
@@ -144,8 +143,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                     ),
-
-                    // Правая колонка с формой
                     Expanded(
                       flex: 6,
                       child: Padding(
@@ -282,11 +279,11 @@ class _LoginScreenState extends State<LoginScreen> {
       onTap: onTap,
       borderRadius: BorderRadius.circular(6),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
         decoration: BoxDecoration(
           color: const Color(0xFF141B2D),
           borderRadius: BorderRadius.circular(6),
-          border: Border.all(color: color.withOpacity(0.4)),
+          border: Border.all(color: const Color(0x6638BDF8)),
         ),
         child: Text(label, style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: color)),
       ),

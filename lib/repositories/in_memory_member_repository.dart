@@ -14,28 +14,32 @@ class InMemoryMemberRepository implements MemberRepository {
       nickname: 'ShadowSlayer',
       email: 'shadow@nexus.club',
       phone: '+7 (999) 111-22-33',
-      card: LoyaltyCard(cardNumber: 'NEXUS-7701', discountPercent: 15, bonusBalance: 1250),
+      card: LoyaltyCard(
+          cardNumber: 'NEXUS-7701', discountPercent: 15, bonusBalance: 1250),
     ),
     const Member(
       id: 2,
       nickname: 'CyberViper',
       email: 'viper@nexus.club',
       phone: '+7 (999) 222-33-44',
-      card: LoyaltyCard(cardNumber: 'NEXUS-7702', discountPercent: 10, bonusBalance: 800),
+      card: LoyaltyCard(
+          cardNumber: 'NEXUS-7702', discountPercent: 10, bonusBalance: 800),
     ),
     const Member(
       id: 3,
       nickname: 'FrostBite',
       email: 'frost@nexus.club',
       phone: '+7 (999) 333-44-55',
-      card: LoyaltyCard(cardNumber: 'NEXUS-7703', discountPercent: 5, bonusBalance: 300),
+      card: LoyaltyCard(
+          cardNumber: 'NEXUS-7703', discountPercent: 5, bonusBalance: 300),
     ),
     const Member(
       id: 4,
       nickname: 'NeoMatrix',
       email: 'neo@nexus.club',
       phone: '+7 (999) 444-55-66',
-      card: LoyaltyCard(cardNumber: 'NEXUS-7704', discountPercent: 20, bonusBalance: 3500),
+      card: LoyaltyCard(
+          cardNumber: 'NEXUS-7704', discountPercent: 20, bonusBalance: 3500),
     ),
   ];
 
@@ -57,7 +61,8 @@ class InMemoryMemberRepository implements MemberRepository {
     }
     try {
       final list = jsonDecode(raw) as List;
-      _members = list.map((e) => Member.fromJson(e as Map<String, dynamic>)).toList();
+      _members =
+          list.map((e) => Member.fromJson(e as Map<String, dynamic>)).toList();
     } catch (_) {
       _members = List.from(_initialSeed);
       _persist();
@@ -67,7 +72,8 @@ class InMemoryMemberRepository implements MemberRepository {
   Future<void> _persist() async {
     final prefs = _prefs;
     if (prefs == null) return;
-    await prefs.setString(_storageKey, jsonEncode(_members.map((m) => m.toJson()).toList()));
+    await prefs.setString(
+        _storageKey, jsonEncode(_members.map((m) => m.toJson()).toList()));
   }
 
   @override
@@ -86,7 +92,9 @@ class InMemoryMemberRepository implements MemberRepository {
 
   @override
   Future<void> create(Member member) async {
-    final newId = _members.isEmpty ? 1 : (_members.map((m) => m.id).reduce((a, b) => a > b ? a : b) + 1);
+    final newId = _members.isEmpty
+        ? 1
+        : (_members.map((m) => m.id).reduce((a, b) => a > b ? a : b) + 1);
     _members.add(member.copyWith(nickname: member.nickname));
     _members[_members.length - 1] = Member(
       id: newId,
@@ -133,6 +141,8 @@ class InMemoryMemberRepository implements MemberRepository {
 
   @override
   Future<bool> isEmailUnique(String email, {int? excludeId}) async {
-    return !_members.any((m) => m.email.trim().toLowerCase() == email.trim().toLowerCase() && m.id != excludeId);
+    return !_members.any((m) =>
+        m.email.trim().toLowerCase() == email.trim().toLowerCase() &&
+        m.id != excludeId);
   }
 }

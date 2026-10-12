@@ -75,7 +75,10 @@ class Member {
         phone: json['phone'] as String? ?? '',
         card: json['card'] != null
             ? LoyaltyCard.fromJson(json['card'] as Map<String, dynamic>)
-            : const LoyaltyCard(cardNumber: 'NEXUS-0000', discountPercent: 5, bonusBalance: 0),
-        deletedAt: json['deletedAt'] == null ? null : DateTime.parse(json['deletedAt'] as String),
+            : const LoyaltyCard(
+                cardNumber: 'NEXUS-0000', discountPercent: 5, bonusBalance: 0),
+        deletedAt: json['deletedAt'] == null
+            ? null
+            : DateTime.parse(json['deletedAt'] as String),
       );
 }

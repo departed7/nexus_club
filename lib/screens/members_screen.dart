@@ -25,7 +25,12 @@ class _MembersScreenState extends State<MembersScreen> {
 
   Future<void> _load() async {
     final list = await context.read<MemberRepository>().findAllActive();
-    if (mounted) setState(() { _members = list; _isLoading = false; });
+    if (mounted) {
+      setState(() {
+        _members = list;
+        _isLoading = false;
+      });
+    }
   }
 
   @override

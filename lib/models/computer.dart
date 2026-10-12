@@ -4,11 +4,11 @@ class Computer {
   final String gpu;
   final String cpu;
   final int ramGb;
-  final int zoneId;         // Многие к одному
-  final List<int> gameIds;  // Многие ко многим
+  final int zoneId; // Многие к одному
+  final List<int> gameIds; // Многие ко многим
   final double hourlyRate;
   final bool isVip;
-  final String ipAddress;   // Поле для проверки уникальности
+  final String ipAddress; // Поле для проверки уникальности
   final DateTime? deletedAt;
 
   const Computer({
@@ -80,6 +80,8 @@ class Computer {
         hourlyRate: (json['hourlyRate'] as num?)?.toDouble() ?? 100.0,
         isVip: json['isVip'] as bool? ?? false,
         ipAddress: json['ipAddress'] as String? ?? '192.168.1.1',
-        deletedAt: json['deletedAt'] == null ? null : DateTime.parse(json['deletedAt'] as String),
+        deletedAt: json['deletedAt'] == null
+            ? null
+            : DateTime.parse(json['deletedAt'] as String),
       );
 }

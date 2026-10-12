@@ -67,27 +67,38 @@ class EntityTable<T> extends StatelessWidget {
             child: ConstrainedBox(
               constraints: BoxConstraints(minWidth: constraints.maxWidth),
               child: DataTable(
-                headingRowColor: WidgetStatePropertyAll(theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5)),
+                headingRowColor: WidgetStatePropertyAll(theme
+                    .colorScheme.surfaceContainerHighest
+                    .withValues(alpha: 0.5)),
                 showCheckboxColumn: onToggleSelect != null,
                 columns: [
                   ...columns.map((col) {
-                    final isCurrentSorted = col.sortField != null && col.sortField == sortField;
+                    final isCurrentSorted =
+                        col.sortField != null && col.sortField == sortField;
                     return DataColumn(
                       numeric: col.numeric,
                       label: InkWell(
-                        onTap: col.sortField != null && onSort != null ? () => onSort!(col.sortField!) : null,
+                        onTap: col.sortField != null && onSort != null
+                            ? () => onSort!(col.sortField!)
+                            : null,
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text(col.label, style: const TextStyle(fontWeight: FontWeight.bold)),
+                            Text(col.label,
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold)),
                             if (col.sortField != null) ...[
                               const SizedBox(width: 4),
                               Icon(
                                 isCurrentSorted
-                                    ? (sortAscending ? Icons.arrow_upward_rounded : Icons.arrow_downward_rounded)
+                                    ? (sortAscending
+                                        ? Icons.arrow_upward_rounded
+                                        : Icons.arrow_downward_rounded)
                                     : Icons.unfold_more_rounded,
                                 size: 16,
-                                color: isCurrentSorted ? theme.colorScheme.primary : theme.colorScheme.outline,
+                                color: isCurrentSorted
+                                    ? theme.colorScheme.primary
+                                    : theme.colorScheme.outline,
                               ),
                             ],
                           ],
@@ -97,7 +108,8 @@ class EntityTable<T> extends StatelessWidget {
                   }),
                   if (actions != null)
                     const DataColumn(
-                      label: Text('Действия', style: TextStyle(fontWeight: FontWeight.bold)),
+                      label: Text('Действия',
+                          style: TextStyle(fontWeight: FontWeight.bold)),
                     ),
                 ],
                 rows: items.map((item) {
@@ -106,7 +118,9 @@ class EntityTable<T> extends StatelessWidget {
 
                   return DataRow(
                     selected: isSelected,
-                    onSelectChanged: onToggleSelect != null ? (_) => onToggleSelect!(id) : null,
+                    onSelectChanged: onToggleSelect != null
+                        ? (_) => onToggleSelect!(id)
+                        : null,
                     cells: [
                       ...columns.map((col) => DataCell(col.build(item))),
                       if (actions != null)

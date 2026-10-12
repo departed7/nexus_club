@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class NexusBrandLogo extends StatelessWidget {
   final double fontSize;
@@ -12,44 +13,52 @@ class NexusBrandLogo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Row(
+    return InkWell(
+      onTap: () => context.go('/dashboard'), // Клик возвращает на Главную
+      borderRadius: BorderRadius.circular(8),
+      hoverColor: Colors.transparent,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              'КИБЕР',
-              style: TextStyle(
-                fontSize: fontSize,
-                fontWeight: FontWeight.w900,
-                letterSpacing: 1.0,
-                color: const Color(0xFFFF5500),
-              ),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'КИБЕР',
+                  style: TextStyle(
+                    fontSize: fontSize,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 1.0,
+                    color: const Color(0xFFFF5500),
+                  ),
+                ),
+                Text(
+                  'NEXUS',
+                  style: TextStyle(
+                    fontSize: fontSize,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 1.5,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
             ),
-            Text(
-              'NEXUS',
-              style: TextStyle(
-                fontSize: fontSize,
-                fontWeight: FontWeight.w900,
-                letterSpacing: 1.5,
-                color: Colors.white,
+            if (subtitle != null)
+              Text(
+                subtitle!,
+                style: const TextStyle(
+                  fontSize: 9,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.2,
+                  color: Color(0xFF94A3B8),
+                ),
               ),
-            ),
           ],
         ),
-        if (subtitle != null)
-          Text(
-            subtitle!,
-            style: const TextStyle(
-              fontSize: 9,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 1.2,
-              color: Color(0xFF94A3B8),
-            ),
-          ),
-      ],
+      ),
     );
   }
 }

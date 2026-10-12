@@ -13,29 +13,30 @@ class ApiZoneRepository implements ZoneRepository {
 
   @override
   Future<List<ClubZone>> findAllActive() => guard(() async {
-    if (_cachedZones != null) return _cachedZones!;
-    final response = await _dio.get('/zones');
-    final list = (response.data as List)
-        .map((e) => ClubZone.fromJson(e as Map<String, dynamic>))
-        .toList();
-    _cachedZones = list;
-    return list;
-  });
+        if (_cachedZones != null) return _cachedZones!;
+        final response = await _dio.get('/zones');
+        final list = (response.data as List)
+            .map((e) => ClubZone.fromJson(e as Map<String, dynamic>))
+            .toList();
+        _cachedZones = list;
+        return list;
+      });
 
   @override
   Future<PageResult<ClubZone>> find(ZoneQuery q) => guard(() async {
-    final list = await findAllActive();
-    return PageResult(items: list, page: 1, size: list.length, total: list.length);
-  });
+        final list = await findAllActive();
+        return PageResult(
+            items: list, page: 1, size: list.length, total: list.length);
+      });
 
   @override
   Future<ClubZone?> findById(int id) async => null;
 
   @override
   Future<void> softDelete(int id) => guard(() async {
-    await _dio.delete('/zones/$id');
-    _cachedZones = null; // Сброс кэша
-  });
+        await _dio.delete('/zones/$id');
+        _cachedZones = null; // Сброс кэша
+      });
 
   @override
   Future<void> restore(int id) async {}

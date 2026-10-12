@@ -83,7 +83,9 @@ class EntityFormScaffold extends StatelessWidget {
                             onPressed: () async {
                               if (isDirty) {
                                 final shouldPop = await _showDiscardDialog(context);
-                                if (shouldPop && context.mounted) Navigator.of(context).pop();
+                                if (shouldPop && context.mounted) {
+                                  Navigator.of(context).pop();
+                                }
                               } else {
                                 Navigator.of(context).pop();
                               }

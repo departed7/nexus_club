@@ -27,9 +27,19 @@ class _AdminUsersScreenState extends State<AdminUsersScreen> {
       final dio = context.read<Dio>();
       final res = await dio.get('/admin/users');
       final list = (res.data as List).map((e) => AppUser.fromJson(e as Map<String, dynamic>)).toList();
-      if (mounted) setState(() { _users = list; _isLoading = false; });
+      if (mounted) {
+        setState(() {
+          _users = list;
+          _isLoading = false;
+        });
+      }
     } catch (e) {
-      if (mounted) setState(() { _error = '$e'; _isLoading = false; });
+      if (mounted) {
+        setState(() {
+          _error = '$e';
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -119,7 +129,7 @@ class _AdminUsersScreenState extends State<AdminUsersScreen> {
                                   children: [
                                     CircleAvatar(
                                       radius: 20,
-                                      backgroundColor: roleColor.withOpacity(0.12),
+                                      backgroundColor: const Color(0x2638BDF8),
                                       child: Text(
                                         u.username[0].toUpperCase(),
                                         style: TextStyle(fontWeight: FontWeight.bold, color: roleColor),
@@ -139,9 +149,9 @@ class _AdminUsersScreenState extends State<AdminUsersScreen> {
                                     Container(
                                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                                       decoration: BoxDecoration(
-                                        color: roleColor.withOpacity(0.1),
+                                        color: const Color(0x1A00E599),
                                         borderRadius: BorderRadius.circular(6),
-                                        border: Border.all(color: roleColor.withOpacity(0.3)),
+                                        border: Border.all(color: const Color(0x4D00E599)),
                                       ),
                                       child: Text(
                                         u.role.label,

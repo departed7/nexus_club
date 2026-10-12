@@ -12,8 +12,11 @@ import 'screens/register_screen.dart';
 import 'screens/forbidden_screen.dart';
 import 'screens/admin_users_screen.dart';
 
+final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
+
 GoRouter buildRouter(AuthNotifier auth) {
   return GoRouter(
+    navigatorKey: rootNavigatorKey,
     refreshListenable: auth,
     initialLocation: '/dashboard',
     redirect: (context, state) {
@@ -23,12 +26,10 @@ GoRouter buildRouter(AuthNotifier auth) {
       final target = state.matchedLocation;
       final isPublic = target == '/login' || target == '/register';
 
-      // 1. Не залогинен и идет на закрытый экран — на логин с сохранением адреса (Критерий 11)
       if (!loggedIn && !isPublic) {
         return '/login?from=${Uri.encodeComponent(state.uri.toString())}';
       }
 
-      // 2. Уже вошел и идет на экран входа — перенаправляем на Главный дашборд
       if (loggedIn && isPublic) {
         return '/dashboard';
       }
@@ -48,7 +49,6 @@ GoRouter buildRouter(AuthNotifier auth) {
         path: '/forbidden',
         builder: (context, state) => const ForbiddenScreen(),
       ),
-      // Приветственная страница (Главный дашборд)
       GoRoute(
         path: '/dashboard',
         builder: (context, state) => const DashboardScreen(),
@@ -83,7 +83,6 @@ GoRouter buildRouter(AuthNotifier auth) {
         path: '/members',
         builder: (context, state) => const MembersScreen(),
       ),
-      // Закрытый экран только для Администратора (Критерий 8 и 9)
       GoRoute(
         path: '/admin/users',
         builder: (context, state) => const AdminUsersScreen(),

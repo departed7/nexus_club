@@ -28,7 +28,8 @@ class _ComputersScreenState extends State<ComputersScreen> {
   @override
   void initState() {
     super.initState();
-    _searchController = TextEditingController(text: widget.queryParams['search'] ?? '');
+    _searchController =
+        TextEditingController(text: widget.queryParams['search'] ?? '');
     _loadZones();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -73,7 +74,8 @@ class _ComputersScreenState extends State<ComputersScreen> {
     if (q.size != 10) params['size'] = q.size.toString();
     if (q.includeDeleted) params['deleted'] = 'true';
 
-    final uri = Uri(path: '/computers', queryParameters: params.isEmpty ? null : params);
+    final uri = Uri(
+        path: '/computers', queryParameters: params.isEmpty ? null : params);
     context.go(uri.toString());
   }
 
@@ -99,7 +101,8 @@ class _ComputersScreenState extends State<ComputersScreen> {
             Center(
               child: Container(
                 margin: const EdgeInsets.only(right: 12),
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 decoration: BoxDecoration(
                   color: auth.user!.role == Role.admin
                       ? const Color(0x2EFBBF24)
@@ -115,9 +118,13 @@ class _ComputersScreenState extends State<ComputersScreen> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(
-                      auth.user!.role == Role.admin ? Icons.shield_rounded : Icons.person_rounded,
+                      auth.user!.role == Role.admin
+                          ? Icons.shield_rounded
+                          : Icons.person_rounded,
                       size: 14,
-                      color: auth.user!.role == Role.admin ? const Color(0xFFFBBF24) : const Color(0xFF818CF8),
+                      color: auth.user!.role == Role.admin
+                          ? const Color(0xFFFBBF24)
+                          : const Color(0xFF818CF8),
                     ),
                     const SizedBox(width: 6),
                     Text(
@@ -125,7 +132,9 @@ class _ComputersScreenState extends State<ComputersScreen> {
                       style: TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.bold,
-                        color: auth.user!.role == Role.admin ? const Color(0xFFFBBF24) : Colors.white,
+                        color: auth.user!.role == Role.admin
+                            ? const Color(0xFFFBBF24)
+                            : Colors.white,
                       ),
                     ),
                   ],
@@ -148,23 +157,32 @@ class _ComputersScreenState extends State<ComputersScreen> {
                   borderRadius: BorderRadius.circular(8),
                   child: const Padding(
                     padding: EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                    child: Text('Главная', style: TextStyle(fontSize: 13, color: Color(0xFF94A3B8))),
+                    child: Text('Главная',
+                        style:
+                            TextStyle(fontSize: 13, color: Color(0xFF94A3B8))),
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
                   decoration: BoxDecoration(
                     color: const Color(0xFFFF5500),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Text('Компьютеры', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.white)),
+                  child: const Text('Компьютеры',
+                      style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white)),
                 ),
                 InkWell(
                   onTap: () => context.go('/zones'),
                   borderRadius: BorderRadius.circular(8),
                   child: const Padding(
                     padding: EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                    child: Text('Зоны зала', style: TextStyle(fontSize: 13, color: Color(0xFF94A3B8))),
+                    child: Text('Зоны зала',
+                        style:
+                            TextStyle(fontSize: 13, color: Color(0xFF94A3B8))),
                   ),
                 ),
                 InkWell(
@@ -172,7 +190,9 @@ class _ComputersScreenState extends State<ComputersScreen> {
                   borderRadius: BorderRadius.circular(8),
                   child: const Padding(
                     padding: EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                    child: Text('Клиенты', style: TextStyle(fontSize: 13, color: Color(0xFF94A3B8))),
+                    child: Text('Клиенты',
+                        style:
+                            TextStyle(fontSize: 13, color: Color(0xFF94A3B8))),
                   ),
                 ),
                 if (auth.has(Role.admin))
@@ -180,13 +200,19 @@ class _ComputersScreenState extends State<ComputersScreen> {
                     onTap: () => context.go('/admin/users'),
                     borderRadius: BorderRadius.circular(8),
                     child: const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                      child: Text('Персонал', style: TextStyle(fontSize: 13, color: Color(0xFFFF5500), fontWeight: FontWeight.bold)),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                      child: Text('Персонал',
+                          style: TextStyle(
+                              fontSize: 13,
+                              color: Color(0xFFFF5500),
+                              fontWeight: FontWeight.bold)),
                     ),
                   ),
                 IconButton(
                   tooltip: 'Выход',
-                  icon: const Icon(Icons.logout_rounded, size: 18, color: Color(0xFFEF4444)),
+                  icon: const Icon(Icons.logout_rounded,
+                      size: 18, color: Color(0xFFEF4444)),
                   onPressed: () => auth.logout(),
                 ),
               ],
@@ -214,22 +240,27 @@ class _ComputersScreenState extends State<ComputersScreen> {
                         Expanded(
                           child: TextField(
                             controller: _searchController,
-                            style: const TextStyle(fontSize: 14, color: Colors.white),
+                            style: const TextStyle(
+                                fontSize: 14, color: Colors.white),
                             decoration: InputDecoration(
-                              hintText: 'Поиск по названию ПК, видеокарте или процессору...',
-                              prefixIcon: const Icon(Icons.search_rounded, size: 20, color: Color(0xFFFF5500)),
+                              hintText:
+                                  'Поиск по названию ПК, видеокарте или процессору...',
+                              prefixIcon: const Icon(Icons.search_rounded,
+                                  size: 20, color: Color(0xFFFF5500)),
                               filled: true,
                               fillColor: const Color(0xFF080C16),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
-                                borderSide: const BorderSide(color: Color(0xFF1E2842)),
+                                borderSide:
+                                    const BorderSide(color: Color(0xFF1E2842)),
                               ),
                               suffixIcon: _searchController.text.isNotEmpty
                                   ? IconButton(
                                       icon: const Icon(Icons.clear, size: 18),
                                       onPressed: () {
                                         _searchController.clear();
-                                        notifier.applyQuery(q.copyWith(search: ''));
+                                        notifier
+                                            .applyQuery(q.copyWith(search: ''));
                                         _pushQueryToUrl(notifier.query);
                                       },
                                     )
@@ -248,12 +279,15 @@ class _ComputersScreenState extends State<ComputersScreen> {
                             style: FilledButton.styleFrom(
                               backgroundColor: const Color(0xFFFF5500),
                               foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 18, vertical: 14),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10)),
                             ),
                             onPressed: () => context.go('/computers/new'),
                             icon: const Icon(Icons.add_rounded, size: 20),
-                            label: const Text('Добавить ПК', style: TextStyle(fontWeight: FontWeight.bold)),
+                            label: const Text('Добавить ПК',
+                                style: TextStyle(fontWeight: FontWeight.bold)),
                           ),
                         ],
                       ],
@@ -276,10 +310,18 @@ class _ComputersScreenState extends State<ComputersScreen> {
                             child: DropdownButton<int?>(
                               value: q.zoneId,
                               dropdownColor: const Color(0xFF0F1527),
-                              hint: const Text('Все зоны зала', style: TextStyle(fontSize: 13, color: Color(0xFF94A3B8))),
+                              hint: const Text('Все зоны зала',
+                                  style: TextStyle(
+                                      fontSize: 13, color: Color(0xFF94A3B8))),
                               items: [
-                                const DropdownMenuItem(value: null, child: Text('Все зоны зала', style: TextStyle(fontSize: 13))),
-                                ..._zones.map((z) => DropdownMenuItem(value: z.id, child: Text(z.name, style: const TextStyle(fontSize: 13)))),
+                                const DropdownMenuItem(
+                                    value: null,
+                                    child: Text('Все зоны зала',
+                                        style: TextStyle(fontSize: 13))),
+                                ..._zones.map((z) => DropdownMenuItem(
+                                    value: z.id,
+                                    child: Text(z.name,
+                                        style: const TextStyle(fontSize: 13)))),
                               ],
                               onChanged: (val) {
                                 notifier.applyQuery(q.copyWith(zoneId: val));
@@ -300,11 +342,22 @@ class _ComputersScreenState extends State<ComputersScreen> {
                             child: DropdownButton<bool?>(
                               value: q.isVip,
                               dropdownColor: const Color(0xFF0F1527),
-                              hint: const Text('Все тарифы', style: TextStyle(fontSize: 13, color: Color(0xFF94A3B8))),
+                              hint: const Text('Все тарифы',
+                                  style: TextStyle(
+                                      fontSize: 13, color: Color(0xFF94A3B8))),
                               items: const [
-                                DropdownMenuItem(value: null, child: Text('Все тарифы', style: TextStyle(fontSize: 13))),
-                                DropdownMenuItem(value: true, child: Text('Только VIP', style: TextStyle(fontSize: 13))),
-                                DropdownMenuItem(value: false, child: Text('Обычные места', style: TextStyle(fontSize: 13))),
+                                DropdownMenuItem(
+                                    value: null,
+                                    child: Text('Все тарифы',
+                                        style: TextStyle(fontSize: 13))),
+                                DropdownMenuItem(
+                                    value: true,
+                                    child: Text('Только VIP',
+                                        style: TextStyle(fontSize: 13))),
+                                DropdownMenuItem(
+                                    value: false,
+                                    child: Text('Обычные места',
+                                        style: TextStyle(fontSize: 13))),
                               ],
                               onChanged: (val) {
                                 notifier.applyQuery(q.copyWith(isVip: val));
@@ -315,14 +368,22 @@ class _ComputersScreenState extends State<ComputersScreen> {
                         ),
                         FilterChip(
                           backgroundColor: const Color(0xFF080C16),
-                          side: BorderSide(color: q.includeDeleted ? const Color(0xFFEF4444) : const Color(0xFF1E2842)),
+                          side: BorderSide(
+                              color: q.includeDeleted
+                                  ? const Color(0xFFEF4444)
+                                  : const Color(0xFF1E2842)),
                           label: Text(
                             'Показать архивные',
-                            style: TextStyle(fontSize: 13, color: q.includeDeleted ? const Color(0xFFF87171) : const Color(0xFF94A3B8)),
+                            style: TextStyle(
+                                fontSize: 13,
+                                color: q.includeDeleted
+                                    ? const Color(0xFFF87171)
+                                    : const Color(0xFF94A3B8)),
                           ),
                           selected: q.includeDeleted,
                           onSelected: (val) {
-                            notifier.applyQuery(q.copyWith(includeDeleted: val));
+                            notifier
+                                .applyQuery(q.copyWith(includeDeleted: val));
                             _pushQueryToUrl(notifier.query);
                           },
                         ),
@@ -333,11 +394,11 @@ class _ComputersScreenState extends State<ComputersScreen> {
               ),
             ),
             const SizedBox(height: 16),
-
             if (notifier.hasSelection && auth.has(Role.operator))
               Container(
                 margin: const EdgeInsets.only(bottom: 12),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                 decoration: BoxDecoration(
                   color: const Color(0xFF2E1319),
                   border: Border.all(color: const Color(0xFF7F1D1D)),
@@ -346,36 +407,42 @@ class _ComputersScreenState extends State<ComputersScreen> {
                 child: Row(
                   children: [
                     Text('Выбрано ПК: ${notifier.selected.length}',
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 13)),
                     const Spacer(),
                     FilledButton.icon(
-                      style: FilledButton.styleFrom(backgroundColor: const Color(0xFFEF4444)),
+                      style: FilledButton.styleFrom(
+                          backgroundColor: const Color(0xFFEF4444)),
                       icon: const Icon(Icons.delete_outline, size: 18),
-                      label: const Text('Удалить выбранные', style: TextStyle(fontSize: 13)),
+                      label: const Text('Удалить выбранные',
+                          style: TextStyle(fontSize: 13)),
                       onPressed: () async {
                         final count = await notifier.deleteSelected();
                         if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Удалено записей: $count')));
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text('Удалено записей: $count')));
                         }
                       },
                     ),
                   ],
                 ),
               ),
-
             switch (notifier.status) {
-              LoadStatus.loading => const CyberLoader(message: 'Загрузка каталога сетапов...'),
+              LoadStatus.loading =>
+                const CyberLoader(message: 'Загрузка каталога сетапов...'),
               LoadStatus.error => Center(
                   child: Padding(
                     padding: const EdgeInsets.all(40),
                     child: Column(
                       children: [
-                        const Icon(Icons.cloud_off_rounded, size: 48, color: Color(0xFFEF4444)),
+                        const Icon(Icons.cloud_off_rounded,
+                            size: 48, color: Color(0xFFEF4444)),
                         const SizedBox(height: 12),
                         Text(
                           notifier.error ?? 'Ошибка загрузки данных с сервера',
                           textAlign: TextAlign.center,
-                          style: const TextStyle(color: Color(0xFFF87171), fontSize: 14),
+                          style: const TextStyle(
+                              color: Color(0xFFF87171), fontSize: 14),
                         ),
                         const SizedBox(height: 16),
                         FilledButton.icon(
@@ -392,12 +459,17 @@ class _ComputersScreenState extends State<ComputersScreen> {
                     padding: EdgeInsets.all(60),
                     child: Column(
                       children: [
-                        Icon(Icons.inbox_outlined, size: 48, color: Color(0xFF64748B)),
+                        Icon(Icons.inbox_outlined,
+                            size: 48, color: Color(0xFF64748B)),
                         SizedBox(height: 12),
-                        Text('Компьютеры не найдены', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                        Text('Компьютеры не найдены',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 16)),
                         SizedBox(height: 4),
-                        Text('Попробуйте изменить поисковый запрос или сбросить фильтры.',
-                            style: TextStyle(color: Color(0xFF94A3B8), fontSize: 13)),
+                        Text(
+                            'Попробуйте изменить поисковый запрос или сбросить фильтры.',
+                            style: TextStyle(
+                                color: Color(0xFF94A3B8), fontSize: 13)),
                       ],
                     ),
                   ),
@@ -408,7 +480,9 @@ class _ComputersScreenState extends State<ComputersScreen> {
                       items: notifier.result.items,
                       idOf: (c) => c.id,
                       selected: notifier.selected,
-                      onToggleSelect: auth.has(Role.operator) ? (id) => notifier.toggleSelection(id) : null,
+                      onToggleSelect: auth.has(Role.operator)
+                          ? (id) => notifier.toggleSelection(id)
+                          : null,
                       sortField: q.sortField,
                       sortAscending: q.sortAscending,
                       onSort: (field) {
@@ -426,52 +500,77 @@ class _ComputersScreenState extends State<ComputersScreen> {
                           build: (c) => Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Text(c.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                              Text(c.name,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14)),
                               if (c.isVip) ...[
                                 const SizedBox(width: 8),
                                 Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 6, vertical: 2),
                                   decoration: BoxDecoration(
                                     color: const Color(0x26FBBF24),
-                                    border: Border.all(color: const Color(0x66FBBF24)),
+                                    border: Border.all(
+                                        color: const Color(0x66FBBF24)),
                                     borderRadius: BorderRadius.circular(4),
                                   ),
-                                  child: const Text('VIP', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Color(0xFFFBBF24))),
+                                  child: const Text('VIP',
+                                      style: TextStyle(
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.bold,
+                                          color: Color(0xFFFBBF24))),
                                 ),
                               ],
                               if (c.isDeleted) ...[
                                 const SizedBox(width: 8),
-                                const Text('(В архиве)', style: TextStyle(color: Color(0xFFF87171), fontSize: 11)),
+                                const Text('(В архиве)',
+                                    style: TextStyle(
+                                        color: Color(0xFFF87171),
+                                        fontSize: 11)),
                               ],
                             ],
                           ),
                         ),
                         TableColumnSpec<Computer>(
                           label: 'IP-адрес',
-                          build: (c) => Text(c.ipAddress, style: const TextStyle(fontSize: 12, fontFamily: 'monospace', color: Color(0xFF94A3B8))),
+                          build: (c) => Text(c.ipAddress,
+                              style: const TextStyle(
+                                  fontSize: 12,
+                                  fontFamily: 'monospace',
+                                  color: Color(0xFF94A3B8))),
                         ),
                         TableColumnSpec<Computer>(
                           label: 'Видеокарта',
                           sortField: 'gpu',
                           build: (c) => Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 3),
                             decoration: BoxDecoration(
                               color: const Color(0xFF131A2F),
                               borderRadius: BorderRadius.circular(6),
-                              border: Border.all(color: const Color(0xFF1F2B4B)),
+                              border:
+                                  Border.all(color: const Color(0xFF1F2B4B)),
                             ),
-                            child: Text(c.gpu, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Color(0xFFE2E8F0))),
+                            child: Text(c.gpu,
+                                style: const TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                    color: Color(0xFFE2E8F0))),
                           ),
                         ),
                         TableColumnSpec<Computer>(
                           label: 'Процессор',
-                          build: (c) => Text(c.cpu, style: const TextStyle(fontSize: 13, color: Color(0xFF94A3B8))),
+                          build: (c) => Text(c.cpu,
+                              style: const TextStyle(
+                                  fontSize: 13, color: Color(0xFF94A3B8))),
                         ),
                         TableColumnSpec<Computer>(
                           label: 'ОЗУ',
                           sortField: 'ram',
                           numeric: true,
-                          build: (c) => Text('${c.ramGb} ГБ', style: const TextStyle(fontSize: 13)),
+                          build: (c) => Text('${c.ramGb} ГБ',
+                              style: const TextStyle(fontSize: 13)),
                         ),
                         TableColumnSpec<Computer>(
                           label: 'Тариф',
@@ -479,37 +578,46 @@ class _ComputersScreenState extends State<ComputersScreen> {
                           numeric: true,
                           build: (c) => Text(
                             '${c.hourlyRate.toInt()} ₽/ч',
-                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Color(0xFFFF5500)),
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                                color: Color(0xFFFF5500)),
                           ),
                         ),
                       ],
                       actions: auth.has(Role.operator)
                           ? (c) => [
-                              IconButton(
-                                tooltip: 'Редактировать',
-                                icon: const Icon(Icons.edit_outlined, size: 19, color: Color(0xFF38BDF8)),
-                                onPressed: () => context.go('/computers/${c.id}/edit'),
-                              ),
-                              if (!c.isDeleted)
                                 IconButton(
-                                  tooltip: 'В архив',
-                                  icon: const Icon(Icons.delete_outline, size: 19, color: Color(0xFF94A3B8)),
-                                  onPressed: () => notifier.softDelete(c.id),
-                                )
-                              else ...[
-                                IconButton(
-                                  tooltip: 'Восстановить',
-                                  icon: const Icon(Icons.restore, size: 19, color: Color(0xFF10B981)),
-                                  onPressed: () => notifier.restore(c.id),
+                                  tooltip: 'Редактировать',
+                                  icon: const Icon(Icons.edit_outlined,
+                                      size: 19, color: Color(0xFF38BDF8)),
+                                  onPressed: () =>
+                                      context.go('/computers/${c.id}/edit'),
                                 ),
-                                if (auth.has(Role.admin))
+                                if (!c.isDeleted)
                                   IconButton(
-                                    tooltip: 'Удалить навсегда (Admin)',
-                                    icon: const Icon(Icons.delete_forever, size: 19, color: Color(0xFFEF4444)),
-                                    onPressed: () => notifier.hardDelete(c.id),
+                                    tooltip: 'В архив',
+                                    icon: const Icon(Icons.delete_outline,
+                                        size: 19, color: Color(0xFF94A3B8)),
+                                    onPressed: () => notifier.softDelete(c.id),
+                                  )
+                                else ...[
+                                  IconButton(
+                                    tooltip: 'Восстановить',
+                                    icon: const Icon(Icons.restore,
+                                        size: 19, color: Color(0xFF10B981)),
+                                    onPressed: () => notifier.restore(c.id),
                                   ),
-                              ],
-                            ]
+                                  if (auth.has(Role.admin))
+                                    IconButton(
+                                      tooltip: 'Удалить навсегда (Admin)',
+                                      icon: const Icon(Icons.delete_forever,
+                                          size: 19, color: Color(0xFFEF4444)),
+                                      onPressed: () =>
+                                          notifier.hardDelete(c.id),
+                                    ),
+                                ],
+                              ]
                           : null,
                     ),
                     const SizedBox(height: 14),

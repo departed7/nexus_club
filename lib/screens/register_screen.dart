@@ -52,7 +52,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   Future<void> _submit() async {
-    if (!_formKey.currentState!.validate() || !_hasMinLength || !_hasDigit || !_hasSpecial) return;
+    if (!_formKey.currentState!.validate() || !_hasMinLength || !_hasDigit || !_hasSpecial) {
+      return;
+    }
     setState(() => _isLoading = true);
 
     try {
@@ -61,7 +63,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
             _emailCtrl.text.trim(),
             _passwordCtrl.text.trim(),
           );
-      if (mounted) context.go('/dashboard');
+      if (mounted) {
+        context.go('/dashboard');
+      }
     } catch (e) {
       if (mounted) {
         setState(() => _isLoading = false);
@@ -83,7 +87,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final isPasswordValid = _hasMinLength && _hasDigit && _hasSpecial;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF080C16), // Фирменный цвет фона
+      backgroundColor: const Color(0xFF080C16),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
@@ -94,8 +98,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 color: const Color(0xFF0F1527),
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(color: const Color(0xFF1E2842)),
-                boxShadow: [
-                  BoxShadow(color: Colors.black.withOpacity(0.6), blurRadius: 40, offset: const Offset(0, 15)),
+                boxShadow: const [
+                  BoxShadow(color: Color(0x99000000), blurRadius: 40, offset: Offset(0, 15)),
                 ],
               ),
               clipBehavior: Clip.antiAlias,
@@ -103,9 +107,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // ==========================================
-                    // ЛЕВАЯ КОЛОНКА: ПРОМО-БЛОК КЛУБА
-                    // ==========================================
                     Expanded(
                       flex: 5,
                       child: Container(
@@ -173,10 +174,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                       ),
                     ),
-
-                    // ==========================================
-                    // ПРАВАЯ КОЛОНКА: ФОРМА РЕГИСТРАЦИИ
-                    // ==========================================
                     Expanded(
                       flex: 6,
                       child: Padding(
@@ -240,7 +237,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               ),
                               const SizedBox(height: 14),
 
-                              // Индикаторы надежности пароля
                               Wrap(
                                 spacing: 8,
                                 runSpacing: 4,

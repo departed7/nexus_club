@@ -49,7 +49,9 @@ Dio buildDio({String? Function()? tokenProvider}) {
         final req = error.requestOptions;
         final retryCount = (req.extra['retry_count'] as int?) ?? 0;
 
-        if (req.method == 'GET' && retryCount < 3 && error.type != DioExceptionType.cancel) {
+        if (req.method == 'GET' &&
+            retryCount < 3 &&
+            error.type != DioExceptionType.cancel) {
           req.extra['retry_count'] = retryCount + 1;
           await Future.delayed(Duration(milliseconds: 500 * (retryCount + 1)));
           try {

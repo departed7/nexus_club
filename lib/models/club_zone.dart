@@ -44,6 +44,8 @@ class ClubZone {
         name: json['name'] as String? ?? '',
         description: json['description'] as String? ?? '',
         hourlyPrice: (json['hourlyPrice'] as num?)?.toDouble() ?? 100.0,
-        deletedAt: json['deletedAt'] == null ? null : DateTime.parse(json['deletedAt'] as String),
+        deletedAt: json['deletedAt'] == null
+            ? null
+            : DateTime.parse(json['deletedAt'] as String),
       );
 }

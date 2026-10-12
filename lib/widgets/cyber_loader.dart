@@ -8,7 +8,8 @@ class CyberLoader extends StatefulWidget {
   State<CyberLoader> createState() => _CyberLoaderState();
 }
 
-class _CyberLoaderState extends State<CyberLoader> with SingleTickerProviderStateMixin {
+class _CyberLoaderState extends State<CyberLoader>
+    with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
 
   @override
@@ -39,7 +40,8 @@ class _CyberLoaderState extends State<CyberLoader> with SingleTickerProviderStat
             border: Border.all(color: const Color(0xFF1E283D)),
             boxShadow: const [
               BoxShadow(
-                color: Color(0x66000000),                blurRadius: 20,
+                color: Color(0x66000000),
+                blurRadius: 20,
                 offset: Offset(0, 10),
               ),
             ],

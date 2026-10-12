@@ -44,6 +44,8 @@ class Game {
         title: json['title'] as String? ?? '',
         genre: json['genre'] as String? ?? '',
         storageGb: json['storageGb'] as int? ?? 50,
-        deletedAt: json['deletedAt'] == null ? null : DateTime.parse(json['deletedAt'] as String),
+        deletedAt: json['deletedAt'] == null
+            ? null
+            : DateTime.parse(json['deletedAt'] as String),
       );
 }

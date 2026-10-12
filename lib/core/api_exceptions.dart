@@ -10,11 +10,14 @@ sealed class ApiException implements Exception {
 }
 
 class RequestCanceledException extends ApiException {
-  const RequestCanceledException([super.message = 'Запрос отменён новым запросом.']);
+  const RequestCanceledException(
+      [super.message = 'Запрос отменён новым запросом.']);
 }
 
 class NetworkException extends ApiException {
-  const NetworkException([super.message = 'Сервер недоступен. Проверьте соединение или наличие ошибки CORS.']);
+  const NetworkException(
+      [super.message =
+          'Сервер недоступен. Проверьте соединение или наличие ошибки CORS.']);
 }
 
 class UnauthorizedException extends ApiException {
@@ -22,7 +25,8 @@ class UnauthorizedException extends ApiException {
 }
 
 class ForbiddenException extends ApiException {
-  const ForbiddenException([super.message = 'Недостаточно прав для этого действия.']);
+  const ForbiddenException(
+      [super.message = 'Недостаточно прав для этого действия.']);
 }
 
 class NotFoundException extends ApiException {
@@ -30,7 +34,8 @@ class NotFoundException extends ApiException {
 }
 
 class ConflictException extends ApiException {
-  const ConflictException([super.message = 'Операция невозможна из-за конфликта данных.']);
+  const ConflictException(
+      [super.message = 'Операция невозможна из-за конфликта данных.']);
 }
 
 class ValidationException extends ApiException {
@@ -60,8 +65,8 @@ ApiException mapDioError(DioException e) {
     DioExceptionType.sendTimeout ||
     DioExceptionType.receiveTimeout =>
       const NetworkException('Сервер не ответил вовремя (Таймаут).'),
-    DioExceptionType.connectionError =>
-      const NetworkException('Не удалось соединиться с сервером. Проверьте, запущен ли mock-server.'),
+    DioExceptionType.connectionError => const NetworkException(
+        'Не удалось соединиться с сервером. Проверьте, запущен ли mock-server.'),
     _ => const ServerException(),
   };
 }
@@ -74,7 +79,9 @@ ApiException mapHttpError(int status, dynamic rawBody) {
     } catch (_) {}
   }
 
-  final message = (body is Map && body['message'] is String) ? body['message'] as String : null;
+  final message = (body is Map && body['message'] is String)
+      ? body['message'] as String
+      : null;
 
   return switch (status) {
     401 => UnauthorizedException(message ?? 'Требуется вход в систему.'),

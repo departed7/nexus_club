@@ -161,7 +161,9 @@ class _ComputerFormScreenState extends State<ComputerFormScreen> {
         children: [
           Icon(icon, size: 18, color: color),
           const SizedBox(width: 8),
-          Text(title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: color)),
+          Text(title,
+              style: TextStyle(
+                  fontWeight: FontWeight.bold, fontSize: 14, color: color)),
         ],
       ),
     );
@@ -185,7 +187,9 @@ class _ComputerFormScreenState extends State<ComputerFormScreen> {
     }
 
     return EntityFormScaffold(
-      title: widget.isEditing ? 'Редактирование сетапа #${widget.id}' : 'Новый игровой компьютер',
+      title: widget.isEditing
+          ? 'Редактирование сетапа #${widget.id}'
+          : 'Новый игровой компьютер',
       isDirty: _isDirty,
       isSubmitting: _isSubmitting,
       onSubmit: _submit,
@@ -195,16 +199,19 @@ class _ComputerFormScreenState extends State<ComputerFormScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _buildSectionHeader('ИДЕНТИФИКАЦИЯ МЕСТА', Icons.computer_rounded, const Color(0xFF38BDF8)),
+            _buildSectionHeader('ИДЕНТИФИКАЦИЯ МЕСТА', Icons.computer_rounded,
+                const Color(0xFF38BDF8)),
             Row(
               children: [
                 Expanded(
                   flex: 3,
                   child: TextFormField(
                     controller: _nameController,
-                    decoration: const InputDecoration(labelText: 'Название ПК (NEXUS-XX)'),
+                    decoration: const InputDecoration(
+                        labelText: 'Название ПК (NEXUS-XX)'),
                     onChanged: (_) => _markDirty(),
-                    validator: (v) => Validators.required(v) ?? Validators.minLength(v, 3),
+                    validator: (v) =>
+                        Validators.required(v) ?? Validators.minLength(v, 3),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -226,12 +233,16 @@ class _ComputerFormScreenState extends State<ComputerFormScreen> {
               ],
             ),
             const SizedBox(height: 20),
-
-            _buildSectionHeader('ЗОНА И ТАРИФИКАЦИЯ (СВЯЗЬ N:1)', Icons.meeting_room_rounded, const Color(0xFFFBBF24)),
+            _buildSectionHeader('ЗОНА И ТАРИФИКАЦИЯ (СВЯЗЬ N:1)',
+                Icons.meeting_room_rounded, const Color(0xFFFBBF24)),
             DropdownButtonFormField<int>(
               initialValue: _zoneId,
               decoration: const InputDecoration(labelText: 'Игровая зона зала'),
-              items: _zones.map((z) => DropdownMenuItem(value: z.id, child: Text('${z.name} (${z.hourlyPrice.toInt()} ₽/ч)'))).toList(),
+              items: _zones
+                  .map((z) => DropdownMenuItem(
+                      value: z.id,
+                      child: Text('${z.name} (${z.hourlyPrice.toInt()} ₽/ч)')))
+                  .toList(),
               onChanged: (val) {
                 if (val != null) {
                   setState(() {
@@ -246,7 +257,6 @@ class _ComputerFormScreenState extends State<ComputerFormScreen> {
               validator: (v) => v == null ? 'Выберите зону' : null,
             ),
             const SizedBox(height: 12),
-
             if (_availableTariffs.isNotEmpty) ...[
               Container(
                 padding: const EdgeInsets.all(12),
@@ -258,27 +268,36 @@ class _ComputerFormScreenState extends State<ComputerFormScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('Пакетные тарифы зоны (Каскадный отбор):', style: TextStyle(fontSize: 12, color: Color(0xFF94A3B8))),
+                    const Text('Пакетные тарифы зоны (Каскадный отбор):',
+                        style:
+                            TextStyle(fontSize: 12, color: Color(0xFF94A3B8))),
                     const SizedBox(height: 8),
                     Wrap(
                       spacing: 8,
                       runSpacing: 6,
-                      children: _availableTariffs.map((t) => Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF1E283D),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Text('${t.name} • ${t.price.toInt()} ₽', style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFF00E599))),
-                      )).toList(),
+                      children: _availableTariffs
+                          .map((t) => Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF1E283D),
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                child: Text('${t.name} • ${t.price.toInt()} ₽',
+                                    style: const TextStyle(
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xFF00E599))),
+                              ))
+                          .toList(),
                     ),
                   ],
                 ),
               ),
               const SizedBox(height: 16),
             ],
-
-            _buildSectionHeader('КОНФИГУРАЦИЯ ОБОРУДОВАНИЯ', Icons.memory_rounded, const Color(0xFF00E599)),
+            _buildSectionHeader('КОНФИГУРАЦИЯ ОБОРУДОВАНИЯ',
+                Icons.memory_rounded, const Color(0xFF00E599)),
             Row(
               children: [
                 Expanded(
@@ -317,7 +336,8 @@ class _ComputerFormScreenState extends State<ComputerFormScreen> {
                   child: TextFormField(
                     controller: _rateController,
                     keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(labelText: 'Тариф (₽/час)'),
+                    decoration:
+                        const InputDecoration(labelText: 'Тариф (₽/час)'),
                     onChanged: (_) => _markDirty(),
                     validator: (v) => Validators.positiveNumber(v),
                   ),
@@ -325,11 +345,13 @@ class _ComputerFormScreenState extends State<ComputerFormScreen> {
               ],
             ),
             const SizedBox(height: 20),
-
-            _buildSectionHeader('ПРЕДУСТАНОВЛЕННЫЕ ИГРЫ (СВЯЗЬ N:N)', Icons.sports_esports_rounded, const Color(0xFFA855F7)),
+            _buildSectionHeader('ПРЕДУСТАНОВЛЕННЫЕ ИГРЫ (СВЯЗЬ N:N)',
+                Icons.sports_esports_rounded, const Color(0xFFA855F7)),
             FormField<List<int>>(
               initialValue: _gameIds,
-              validator: (v) => (v == null || v.isEmpty) ? 'Выберите хотя бы одну игру' : null,
+              validator: (v) => (v == null || v.isEmpty)
+                  ? 'Выберите хотя бы одну игру'
+                  : null,
               builder: (field) {
                 return InputDecorator(
                   decoration: InputDecoration(
@@ -344,7 +366,8 @@ class _ComputerFormScreenState extends State<ComputerFormScreen> {
                       return FilterChip(
                         label: Text(g.title),
                         selected: isSelected,
-                        selectedColor: const Color(0xFF00E599).withValues(alpha: 0.25),
+                        selectedColor:
+                            const Color(0xFF00E599).withValues(alpha: 0.25),
                         checkmarkColor: const Color(0xFF00E599),
                         onSelected: (_) {
                           final next = List<int>.from(field.value!);
@@ -364,12 +387,13 @@ class _ComputerFormScreenState extends State<ComputerFormScreen> {
               },
             ),
             const SizedBox(height: 16),
-
             SwitchListTile(
               contentPadding: EdgeInsets.zero,
               activeThumbColor: const Color(0xFFFBBF24),
-              title: const Text('VIP статус компьютера', style: TextStyle(fontWeight: FontWeight.bold)),
-              subtitle: const Text('Золотой бейдж в каталоге и приоритет на бронирование'),
+              title: const Text('VIP статус компьютера',
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+              subtitle: const Text(
+                  'Золотой бейдж в каталоге и приоритет на бронирование'),
               value: _isVip,
               onChanged: (val) {
                 setState(() => _isVip = val);

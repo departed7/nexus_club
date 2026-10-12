@@ -33,8 +33,12 @@ class AuthNotifier extends ChangeNotifier {
     if (access != null) {
       _accessToken = access;
       final cachedRole = _prefs.getString(_kRole);
-    if (cachedRole != null) {
-        _user = AppUser(id: 3, username: 'gamer', email: 'gamer@nexus.club', role: Role.fromString(cachedRole));
+      if (cachedRole != null) {
+        _user = AppUser(
+            id: 3,
+            username: 'gamer',
+            email: 'gamer@nexus.club',
+            role: Role.fromString(cachedRole));
       }
       try {
         final res = await _dio.get(

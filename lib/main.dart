@@ -26,7 +26,6 @@ void main() async {
 
   final prefs = await SharedPreferences.getInstance();
 
-  // Создаем Dio
   final dio = Dio(
     BaseOptions(
       baseUrl: apiBaseUrl,
@@ -40,7 +39,6 @@ void main() async {
   late final AuthNotifier authNotifier;
   authNotifier = AuthNotifier(prefs, dio);
 
-  // Интерцептор автоматической подстановки токена и Silent Refresh (Критерий 13 на «5»)
   dio.interceptors.add(
     InterceptorsWrapper(
       onRequest: (options, handler) {
@@ -51,11 +49,9 @@ void main() async {
         return handler.next(options);
       },
       onError: (error, handler) async {
-        // Если токен истёк (401), пробуем обновить через refresh-токен
         if (error.response?.statusCode == 401 && !error.requestOptions.path.contains('/auth/')) {
           final refreshed = await authNotifier.refreshTokens();
           if (refreshed) {
-            // Повторяем упавший запрос с новым токеном
             final opts = error.requestOptions;
             opts.headers['Authorization'] = 'Bearer ${authNotifier.accessToken}';
             try {
@@ -69,14 +65,13 @@ void main() async {
     ),
   );
 
-  // Восстанавливаем сессию из SharedPreferences до первого кадра
   await authNotifier.restore();
 
   final computerRepo = ApiComputerRepository(dio);
   final zoneRepo = ApiZoneRepository(dio);
   final gameRepo = InMemoryGameRepository();
   final tariffRepo = InMemoryTariffRepository();
-  final memberRepo = InMemoryMemberRepository();
+  final memberRepo = InMemoryMemberRepository(prefs);
 
   runApp(
     MultiProvider(
@@ -103,7 +98,6 @@ class NexusApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InactivityWatcher(
-      timeout: const Duration(minutes: 3), // Выход по неактивности через 3 мин (Критерий 14)
       onTimeout: () => authNotifier.logout(),
       child: MaterialApp.router(
         title: 'Nexus Club OS',
@@ -112,40 +106,40 @@ class NexusApp extends StatelessWidget {
         darkTheme: ThemeData(
           useMaterial3: true,
           brightness: Brightness.dark,
-          scaffoldBackgroundColor: const Color(0xFF090D16),
+          scaffoldBackgroundColor: const Color(0xFF080C16),
           colorScheme: const ColorScheme.dark(
-            primary: Color(0xFF00E599),
+            primary: Color(0xFFFF5500),
             secondary: Color(0xFF38BDF8),
-            surface: Color(0xFF111726),
-            surfaceContainerHighest: Color(0xFF1A2238),
+            surface: Color(0xFF0F1527),
+            surfaceContainerHighest: Color(0xFF161F36),
           ),
           appBarTheme: const AppBarTheme(
-            backgroundColor: Color(0xFF0F1523),
+            backgroundColor: Color(0xFF0D1222),
             elevation: 0,
-            shape: Border(bottom: BorderSide(color: Color(0xFF1E283D))),
+            shape: Border(bottom: BorderSide(color: Color(0xFF1E2842))),
           ),
           cardTheme: CardThemeData(
-            color: const Color(0xFF111726),
+            color: const Color(0xFF0F1527),
             elevation: 0,
             shape: RoundedRectangleBorder(
-              side: const BorderSide(color: Color(0xFF1E283D)),
-              borderRadius: BorderRadius.circular(14),
+              side: const BorderSide(color: Color(0xFF1E2842)),
+              borderRadius: BorderRadius.circular(16),
             ),
           ),
           inputDecorationTheme: InputDecorationTheme(
             filled: true,
-            fillColor: const Color(0xFF0B0F19),
+            fillColor: const Color(0xFF080C16),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-              borderSide: const BorderSide(color: Color(0xFF24304A)),
+              borderSide: const BorderSide(color: Color(0xFF1E2842)),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-              borderSide: const BorderSide(color: Color(0xFF24304A)),
+              borderSide: const BorderSide(color: Color(0xFF1E2842)),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-              borderSide: const BorderSide(color: Color(0xFF00E599), width: 1.8),
+              borderSide: const BorderSide(color: Color(0xFFFF5500), width: 1.8),
             ),
           ),
         ),
